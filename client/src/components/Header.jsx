@@ -1,75 +1,74 @@
-import { Button, Navbar, TextInput } from 'flowbite-react';
-import { Link, useLocation } from 'react-router-dom';
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import Logo from '../assets/svg/13.svg';
 
-export default function Header() {
-  const path = useLocation().pathname;
+const Navbar = () => {
+  const [open, setOpen] = useState(false);
+
   return (
-    <Navbar className='flex justify-between items-center p-4 pt-5'>
-
-      {/* Logo */}
-      <Link to='/' className='text-sm sm:text-xl font-semibold dark:text-white'>
-        <span className='text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl 
-         focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 
-         font-medium rounded-lg px-5 py-2.5'>
-          Naman's
-        </span> Blog
+    <div className="w-full h-16 md:h-20 flex items-center justify-between">
+      {/* LOGO */}
+      <Link to="/" className="flex items-center gap-4 text-2xl font-bold">
+        <img src={Logo} alt="Lama Logo" className="max-w-12 max-h-12" />
+        <span>BlogBerry</span>
       </Link>
-
-      {/* Centered Navigation Links - Visible only on lg screens */}
-      <div className='hidden lg:flex items-center gap-10 flex-1 justify-center'>
-
-        <Link to='/' className={`text-base font-medium ${path === "/" ? "text-blue-300" : "text-gray-900 dark:text-white hover:text-gray-300"}`}>Home</Link>
-        <Link to='/about' className={`text-base font-medium ${path === "/about" ? "text-blue-300" : "text-gray-900 dark:text-white hover:text-gray-300"}`}>About</Link>
-        <Link to='/projects' className={`text-base font-medium ${path === "/projects" ? "text-blue-300" : "text-gray-900 dark:text-white hover:text-gray-300 "}`}>Projects</Link>
+      {/* MOBILE MENU */}
+      <div className="md:hidden">
+        {/* MOBILE BUTTON */}
+        <div
+          className="cursor-pointer text-4xl"
+          onClick={() => setOpen((prev) => !prev)}
+        >
+          {/* Change Hamburger Icon */}
+          {/* {open ? "X" : "☰"} */}
+          <div className="flex flex-col gap-[5.4px]">
+            <div
+              className={`h-[3px] rounded-md w-6 bg-black origin-left transition-all ease-in-out ${
+                open && "rotate-45"
+              }`}
+            ></div>
+            <div
+              className={`h-[3px] rounded-md w-6 bg-black transition-all ease-in-out ${
+                open && "opacity-0"
+              }`}
+            ></div>
+            <div
+              className={`h-[3px] rounded-md w-6 bg-black origin-left transition-all ease-in-out ${
+                open && "-rotate-45"
+              }`}
+            ></div>
+          </div>
+        </div>
+        {/* MOBILE LINK LIST */}
+        <div
+          className={`w-full h-screen bg-[#e6e6ff] flex flex-col items-center justify-center gap-8 font-medium text-lg absolute top-16 transition-all ease-in-out  ${
+            open ? "-right-0" : "-right-[100%]"
+          }`}
+        >
+          <Link to="/" onClick={()=>setOpen(false)}>Home</Link>
+          <Link to="/posts?sort=trending" onClick={()=>setOpen(false)}>Trending</Link>
+          <Link to="/posts?sort=popular" onClick={()=>setOpen(false)}>Most Popular</Link>
+          <Link to="/" onClick={()=>setOpen(false)}>About</Link>
+          <Link to="/login" onClick={()=>setOpen(false)}>
+            <button className="py-2 px-4 rounded-3xl bg-blue-800 text-white cursor-pointer">
+              Login 👋
+            </button>
+          </Link>
+        </div>
       </div>
+      {/* DESKTOP MENU */}
+      <div className="hidden md:flex items-center gap-8 xl:gap-12 font-medium">
+        <Link to="/">Home</Link>
+        <Link to="/about">About</Link>
+        <Link to="/projects">Projects</Link>
 
-      {/* Search Bar & Buttons */}
-      <div className='flex items-center gap-6 ml-auto'>
-        {/* Search Input */}
-        <form className='hidden lg:inline'>
-          <TextInput type='text' placeholder='Search...' className=' rounded-md  hover:text-white hover:outline-1transition duration-200 outline-white ' />
-        </form>
-
-        {/* Moon Button */}
-        <Button className='hidden sm:inline' color='grey' pill>
-          <svg className="w-6 h-6 text-gray-800 dark:text-white hover:text-gray-400 transition duration-200" 
-            xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-            <path fillRule="evenodd" d="M11.675 2.015a.998.998 0 0 0-.403.011C6.09 2.4 2 6.722 2 12c0 5.523 4.477 10 10 10 4.356 0 8.058-2.784 9.43-6.667a1 1 0 0 0-1.02-1.33c-.08.006-.105.005-.127.005h-.001l-.028-.002A5.227 5.227 0 0 0 20 14a8 8 0 0 1-8-8c0-.952.121-1.752.404-2.558a.996.996 0 0 0 .096-.428V3a1 1 0 0 0-.825-.985Z" clipRule="evenodd"/>
-          </svg>
-        </Button>
-
-        {/* Sign In Button */}
-        <Link to='/sign-in'>
-          <button className="relative inline-flex items-center justify-center p-0.5 overflow-hidden 
-          text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 
-          group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 
-          focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800">
-            <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 
-            rounded-md group-hover:bg-transparent group-hover:dark:bg-transparent">
-              Sign In
-            </span>
-          </button>
-        </Link>
+          <Link to="/sign-in">
+            <button className="py-2 px-4 rounded-3xl bg-btn-primary cursor-pointer">
+              Sign In </button>
+          </Link>
       </div>
-
-      {/* Mobile Menu Button - Visible only on small screens */}
-      <div className='lg:hidden'>
-        <Navbar.Toggle className='text-white dark:text-white hover:text-gray-400 transition duration-200 flex ml-8 mr-3' />
-      </div>
-
-      {/* Mobile Navigation Links */}
-      <Navbar.Collapse className='pt-1.5 px-2 lg:hidden'>
-        <Navbar.Link active={path === "/"} as={'div'}>
-          <Link to='/'>Home</Link>
-        </Navbar.Link>
-        <Navbar.Link active={path === "/about"} as={'div'}>
-          <Link to='/about'>About</Link>
-        </Navbar.Link>
-        <Navbar.Link active={path === "/projects"} as={'div'}>
-          <Link to='/projects'>Projects</Link>
-        </Navbar.Link>
-      </Navbar.Collapse>
-
-    </Navbar>
+    </div>
   );
-}
+};
+
+export default Navbar;
