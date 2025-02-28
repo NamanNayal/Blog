@@ -1,8 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Poppins:wght@300;400;500;600&display=swap');
 
 @import "tailwindcss";
-@plugin "flowbite/plugin";
-@source "../node_modules/flowbite";
 
 
 @layer base {
@@ -36,13 +34,16 @@
   
 .input-field {
   @apply w-full px-4 py-2 border rounded-md shadow-sm
-         bg-white text-gray-800 placeholder-gray-500
+         text-gray-800 placeholder-gray-500 bg-white
          focus:outline-none focus:ring-2 focus:ring-[#5A5AFF] focus:border-[#3A3AFF]
          dark:bg-[#222831] dark:text-[#E6E6FF] dark:placeholder-gray-400
-         dark:focus:ring-[#5A5AFF] dark:focus:border-[#3A3AFF];
-         cursor: pointer;
-         
+         dark:focus:ring-[#5A5AFF] dark:focus:border-[#3A3AFF]
+         cursor-pointer;
+}
+/* Fix for autofill */
+.input-field:-webkit-autofill {
+  background-color: transparent !important;
+  -webkit-text-fill-color: #E6E6FF !important;
+  transition: background-color 5000s ease-in-out 0s;
 }
 
- 
-  
