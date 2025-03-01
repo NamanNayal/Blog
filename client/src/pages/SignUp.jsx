@@ -135,9 +135,3 @@ export default function SignUp() {
 }
 
 
-
-//we want to track the changes - so we use a onChange which calls a function handle change, we will create state which will be an empty obj from the beginning, and we will update the state with the new value of the input field we will setformData, we will pass an empty obj to the formData in useState, then we will handle the logic of onChange which then gets and event and a callback function is called which then calls setFormData which updates the state with a new obj Each form field (username, email, etc.) gets stored as a key-value pair inside formData  Since React state should never be mutated directly, we create a new object using {}. {} → Creates a new object. ...formData → Spreads (copies) previous state values. [e.target.id] → Dynamically sets the key (e.g., "email"). e.target.value → Updates the new value. 
-
-//now we need to submit it, we will add onsumbit event listener on form, which calls  function handleSubmit,it will be a async function, we want to prevent default behaviot of browser of refreshing the page, creating a try catch block, then we want to send  a res and fetch data which takes a url and and object which contains a HTTP method, headers which is an object with a content type of application/json, and a body which is a JSON.stringify of the formData, now we have our server running on other port, hence we will create a proxy - in vite.config file, in server- proxy- we will mention any call starting '/api' shall be redirected the backend port we are  using , and because we are using http for now we will turn secure false, once we are done we will convert our response in json and store it in data
-
-//we want now create a loading effect and handling the error 
