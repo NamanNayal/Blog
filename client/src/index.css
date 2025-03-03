@@ -31,6 +31,18 @@
 .bg-btn-primary:hover {
   background-color: #3A3AFF;
 }
+.bg-btn-secondary {
+  background-color: #e6e6ff;
+  transition: background-color 0.3s ease-in-out;
+  color: #5A5AFF;
+  cursor: pointer;
+  border: 2px solid #5A5AFF;
+  
+}
+.bg-btn-secondary:hover {
+background-color: #3A3AFF;
+color: #e6e6ff;
+}
   
 .input-field {
   @apply w-full px-4 py-2 border rounded-md shadow-sm

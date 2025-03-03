@@ -4,6 +4,7 @@ import Logo from '../assets/svg/13.svg';
 import Alert from '../components/Alert';
 import { useDispatch, useSelector } from 'react-redux';
 import { SignInStart, signInSuccess, signInFailure } from '../redux/user/userSlice';
+import OAuth from '../components/OAuth';
 
 export default function SignIn() {
   const [formData, setFormData] = useState({});
@@ -102,6 +103,7 @@ export default function SignIn() {
                 ): 'Sign In'
               } 
             </button>   
+            <OAuth/>
           </form>
 
           {/* Sign In Link */}
