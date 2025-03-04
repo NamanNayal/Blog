@@ -60,3 +60,23 @@ color: #e6e6ff;
 }
 
 
+/* Dropdown Container */
+.dropdown-menu {
+  @apply absolute right-0 mt-2 w-48 bg-[#e6e6ff] shadow-lg rounded-lg border border-[#5A5AFF];
+}
+
+/* Dropdown Items */
+.dropdown-item {
+  @apply block px-4 py-2 text-gray-800 hover:bg-[#e6e6ff] hover:text-[#5A5AFF] cursor-pointer rounded-lg;
+}
+
+/* Dropdown Header (User Info) */
+.dropdown-header {
+  @apply p-3 text-gray-800 font-semibold border-b border-gray-300;
+}
+
+/* Divider */
+.dropdown-divider {
+  @apply border-t border-gray-300;
+}
+
