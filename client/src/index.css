@@ -9,12 +9,13 @@
       font-weight: 900; /* Extra Bold */
     }
     body {
-      font-family: 'Poppins', sans-serif;background-color: #e6e6ff;
+      font-family: 'Poppins', sans-serif;
+      background-color: #e6e6ff;
       color: #393e46;
       width: 100vw;
       overflow-x: hidden;
       font-family: "Montserrat", sans-serif;
-      
+      transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
       
     }
   }
@@ -80,3 +81,51 @@ color: #e6e6ff;
   @apply border-t border-gray-300;
 }
 
+
+/* Dark Mode Styles */
+.dark body {
+  background-color: #121826;
+  color: #E6E6FF;
+}
+
+/* Dark Mode Primary Button */
+.dark .bg-btn-primary {
+  background-color: #3A3AFF;
+  color: #E6E6FF;
+}
+.dark .bg-btn-primary:hover {
+  background-color: #2229E3;
+}
+
+/* Dark Mode Secondary Button */
+.dark .bg-btn-secondary {
+  background-color: #1B2433;
+  color: #5A5AFF;
+  border: 2px solid #5A5AFF;
+}
+.dark .bg-btn-secondary:hover {
+  background-color: #3A3AFF;
+  color: #E6E6FF;
+}
+
+/* Dark Mode Input Fields */
+.dark .input-field {
+  @apply bg-[#1B2433] text-[#E6E6FF] placeholder-gray-400 border-gray-600;
+}
+.dark .input-field:focus {
+  @apply ring-[#5A5AFF] border-[#3A3AFF];
+}
+
+/* Dark Mode Dropdown */
+.dark .dropdown-menu {
+  @apply bg-[#1B2433] border-[#3A3AFF] shadow-lg;
+}
+.dark .dropdown-item {
+  @apply text-[#E6E6FF] hover:bg-[#3A3AFF] hover:text-white;
+}
+.dark .dropdown-header {
+  @apply text-[#E6E6FF] border-b border-gray-600;
+}
+.dark .dropdown-divider {
+  @apply border-t border-gray-600;
+}
