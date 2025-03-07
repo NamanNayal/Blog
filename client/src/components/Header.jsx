@@ -14,7 +14,7 @@ const Navbar = () => {
   return (
     <nav className="w-full h-16 md:h-20 flex items-center justify-between">
       {/* LOGO */}
-      <Link to="/" className="flex items-center gap-4 text-2xl font-bold">
+      <Link to="/" className="flex items-center gap-4 text-2xl font-bold ml-8">
         <img src={Logo} alt="Lama Logo" className="max-w-12 max-h-12" />
         <span>BlogBerry</span>
       </Link>
@@ -103,7 +103,7 @@ const Navbar = () => {
           
         </button>
 
-        <div className="relative ">
+        <div className="relative  mr-8">
         {currentUser ? (
         <>
           <button onClick={() => setIsOpen(!isOpen)} className="flex items-center space-x-2 cursor-pointer">

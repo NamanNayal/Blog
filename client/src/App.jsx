@@ -11,10 +11,10 @@ import Footer from './components/Footer'
 import PrivateRoute from './components/PrivateRoute'
 export default function App() {
   return (
-    <div className="flex flex-col min-h-screen px-4 md:px-8 lg:px-16 lx:px-32 2xl:px-64 py ">
+    <div className="flex flex-col min-h-screen">
       <BrowserRouter>
         <Header />
-        <main className="flex-grow">
+        <main className="flex-grow flex flex-col">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
