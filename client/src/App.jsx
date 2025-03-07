@@ -8,6 +8,7 @@ import SignIn from './pages/SignIn'
 import SignUp from './pages/SignUp'
 import Header from './components/Header'
 import Footer from './components/Footer'
+import PrivateRoute from './components/PrivateRoute'
 export default function App() {
   return (
     <div className="flex flex-col min-h-screen px-4 md:px-8 lg:px-16 lx:px-32 2xl:px-64 py ">
@@ -19,7 +20,9 @@ export default function App() {
             <Route path="/about" element={<About />} />
             <Route path="/sign-in" element={<SignIn />} />
             <Route path="/sign-up" element={<SignUp />} />
+            <Route element={<PrivateRoute/>}>
             <Route path="/dashboard" element={<Dashboard />} />
+            </Route>
             <Route path="/projects" element={<Projects />} />
           </Routes>
         </main>
