@@ -1,19 +1,21 @@
 import { Link } from 'react-router-dom';
 import Logo from '../assets/svg/13.svg';
 import { useSelector } from "react-redux";
+
+
+
 export default function FooterCom() {
   const { theme } = useSelector((state) => state.theme);
   return (
-    
-    
+
     <footer className={`border-t-8 border-[#5A5AFF] py-6 transition-all duration-300
       ${theme === "light" ? "bg-[#E6E6FF] text-gray-800" : "bg-[#121826] text-[#E6E6FF]"}`}>
       <div className="w-full max-w-7xl mx-auto px-4">
-        <div className="flex flex-col sm:flex-row justify-between items-center">
+        <div className="flex flex-col sm:flex-row sm:justify-between items-center gap-4 sm:gap-10 text-start sm:text-left">
           {/* Logo & Branding */}
-          <div className="mb-4 sm:mb-0">
-            <Link to="/" className="flex items-center gap-4 text-2xl font-bold">
-            <img src={Logo} alt="Lama Logo" className="max-w-12 max-h-12" /><span>BlogBerry</span>
+          <div className="mb-4 sm:mb-0 flex justify-center sm:justify-start ">
+            <Link to="/" className="flex items-center  gap-4 text-2xl font-bold">
+            <img src={Logo} alt="BlogBerryLogo" className="max-w-12 max-h-12" /><span>BlogBerry</span>
             </Link>
           </div>
 

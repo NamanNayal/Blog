@@ -47,7 +47,7 @@ export default function SignIn() {
   console.log(formData);
   
   return (
-    <div className="min-h-screen mt-20">
+    <div className="flex-grow flex items-center justify-center mt-18 mb-18">
       <div className="flex p-3 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-5">
         {/* Left Side */}
         <div className="flex-1">
