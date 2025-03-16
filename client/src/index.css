@@ -2,6 +2,13 @@
 
 @import "tailwindcss";
 
+:root {
+  --tw-dark: "";
+}
+
+.dark {
+  --tw-dark: "dark";
+}
 
 @layer base {
     .brand-logo {
