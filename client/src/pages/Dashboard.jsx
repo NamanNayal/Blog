@@ -25,6 +25,7 @@ export default function Dashboard() {
 
 
       </div>
+      <div className="hidden md:block w-[1px] bg-[#5A5AFF] mb-4"></div>
       <div className='flex-1 flex justify-center items-center '>
         {/*Profile */}
         {tab === 'profile' && <DashProfile/>}
