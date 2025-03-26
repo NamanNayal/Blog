@@ -23,6 +23,7 @@
       overflow-x: hidden;
       font-family: "Montserrat", sans-serif;
       transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+ 
       
     }
   }
@@ -36,6 +37,7 @@
     cursor: pointer;
     
   }
+
 .bg-btn-primary:hover {
   background-color: #3A3AFF;
 }
@@ -51,6 +53,26 @@
 background-color: #3A3AFF;
 color: #e6e6ff;
 }
+.bg-btn-primaryRed {
+  background-color: #E53935; /* Brighter but not overpowering */
+  color: #e6e6ff;
+  transition: background-color 0.3s ease-in-out;
+  cursor: pointer;
+}
+.bg-btn-primaryRed:hover {
+  background-color: #C62828; /* Slightly darker for hover */
+}
+
+/* Dark Mode */
+.dark .bg-btn-primaryRed {
+  background-color: #D32F2F; /* Deeper red for contrast */
+  color: #E6E6FF;
+}
+.dark .bg-btn-primaryRed:hover {
+  background-color: #B71C1C; /* Darker red for better depth */
+}
+
+
   
 .input-field {
   @apply w-full px-4 py-2 border rounded-md shadow-sm
@@ -87,6 +109,7 @@ color: #e6e6ff;
 .dropdown-divider {
   @apply border-t border-gray-300;
 }
+
 
 
 /* Dark Mode Styles */
@@ -136,3 +159,5 @@ color: #e6e6ff;
 .dark .dropdown-divider {
   @apply border-t border-gray-600;
 }
+
+

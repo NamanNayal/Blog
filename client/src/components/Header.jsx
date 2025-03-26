@@ -47,10 +47,11 @@ const Navbar = () => {
 
   {/* MOBILE LINK LIST */}
   <div
-    className={`w-full h-screen flex flex-col items-center justify-center gap-8 font-medium text-lg absolute top-16 transition-all ease-in-out  
-      ${open ? "right-0" : "-right-[100%]"} 
-      ${theme.theme === "light" ? "bg-[#e6e6ff] text-gray-800" : "bg-[#121826] text-[#E6E6FF]"}`}
-  >
+  className={`w-full h-screen flex flex-col items-center justify-center gap-8 font-medium text-lg absolute top-16 transition-all ease-in-out  
+    ${open ? "right-0 dark:bg-[#121826]/80 dark:text-[#E6E6FF] backdrop-blur-lg" : "-right-[100%]"} 
+   `}
+>
+
         {/* Theme Toggle for Mobile */}
     <button
       className={`w-12 h-10 flex items-center justify-center rounded-full transition-all duration-300 ease-in-out focus:outline-none
