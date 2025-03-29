@@ -7,7 +7,7 @@ export const signup = async(req, res, next)=>{
     try{
         const {username, email, password} = req.body;
         if(!username || !password || !email || username === ''|| email ==='' || password === ''){
-            next(errorHandler(400, 'All fields are required'));
+            return next(errorHandler(400, 'All fields are required'));
         }
         const hashedPassword = bcryptjs.hashSync(password,10);
 
@@ -46,10 +46,12 @@ export const signin = async(req,res, next) => {
                 id: validUser._id,    
             }, process.env.JWT_SECRET,{expiresIn:'1week'},
         );
+        console.log("Generated Token:", token); 
         const{ password: pass, ...rest} = validUser._doc;
-        res.status(200).cookie('acess_token', token, {
+        res.status(200).cookie('access_token', token, {
             httpOnly: true,
-        }).json(rest); 
+        }).json({message: "Login Successful", user:rest}); 
+        console.log("Set-Cookie Header:", res.getHeaders()['set-cookie']);
 
     }catch(e){
 
