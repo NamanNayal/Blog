@@ -19,3 +19,23 @@ complete update user profile page functionality
 
 
 8.Updating user profile functionality 
+
+9. Delete User API {
+    1. Add a DELETE route in the user routes file with :userId as a route parameter.
+    2. Protect the route using verifyToken middleware to ensure only authenticated users can access it.
+    3. Create a controller function named deleteUser in the controller file.
+    4. In the controller:
+    Check if req.user.id matches req.params.userId.
+    If not, return a 403 (Forbidden) error.
+    If matched, delete the user from the database.
+    Send a success response.
+    5. Handle errors using a try-catch block and forward them to the error handler.
+    6. Connect the DELETE route to the deleteUser controller.
+    7. Test using Postman:
+    Use DELETE method.
+    Set the correct URL with userId.
+    Include the JWT in the Authorization header.
+    8. Confirm it works:
+    Only the correct user can delete their account.
+    Invalid tokens or mismatched IDs should return appropriate errors.
+}
