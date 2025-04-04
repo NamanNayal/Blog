@@ -1,6 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector,useDispatch } from "react-redux";
 import { motion } from "framer-motion";
+import {updateStart, updateSuccess, updateFailure} from '../redux/user/userSlice';
+import { toast } from 'react-hot-toast';
+
 
 export default function DashProfile() {
   const { currentUser } = useSelector((state) => state.user);
@@ -9,6 +12,8 @@ export default function DashProfile() {
   const [imageFileUploadError, setImageFileUploadError] = useState(null);
   const [uploading, setUploading] = useState(false);
   const filePickerRef = useRef();
+  const [formData, setFormData] = useState({});
+  const dispatch = useDispatch();
 
   const handleImageFile = (e) =>{
     const file = e.target.files[0];
@@ -56,12 +61,53 @@ export default function DashProfile() {
   
       const data = await response.json();
       setImageFileUrl(data.secure_url); // Cloudinary URL
+      
     } catch (error) {
       setImageFileUploadError('Could not upload image. Try again.');
     }finally {
       setUploading(false);
     }
   };
+
+  const handleChange = (e) => {
+    setFormData({...formData, [e.target.id]: e.target.value});
+  }
+
+  const handleSubmit = async(e) =>{
+    e.preventDefault(); 
+    const updatedData = { ...formData };
+     if (imageFileUrl) {
+    updatedData.profilePicture = imageFileUrl;
+  }
+    if(Object.keys(updatedData).length === 0){
+      toast.error("Nothing to update");
+      return;
+    }
+    try{
+           
+      dispatch(updateStart());
+      const res = await fetch(`/api/user/update/${currentUser._id}`,{
+        method: 'PUT',
+        headers:{
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedData),
+      });
+      const data = await res.json();
+      if(!res.ok){
+        dispatch(updateFailure(data.message));
+        toast.error(data.message || 'Update failed', { id: 'update-error' });
+      }else{
+        dispatch(updateSuccess(data));
+        toast.success(data.message || 'Profile updated successfully', { id: 'update-success' });
+      }
+
+    }catch(error){
+      dispatch(updateFailure(error.message));
+      toast.error(error.message || 'Something went wrong.');
+    }
+  }
+  
 
   
 
@@ -86,13 +132,6 @@ export default function DashProfile() {
   />
 </div>
 
-
-
-          <img
-            src={imageFileUrl || currentUser.profilePicture}
-            alt="user"
-            className="w-full h-full object-cover border border-gray-300 dark:border-gray-600"
-          />
         </div>
 
         {imageFileUploadError && ( 
@@ -101,7 +140,7 @@ export default function DashProfile() {
 
         {/* Profile Info */}
         <h1 className="text-3xl font-semibold text-center hover:cursor-pointer">Profile</h1> 
-        <form className="flex flex-col gap-4 w-full">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">
           {/* Image Upload */}
           <input type="file" accept="image/*" onChange={handleImageFile} ref={filePickerRef} hidden/>
           
@@ -112,7 +151,8 @@ export default function DashProfile() {
             placeholder="Username"
             defaultValue={currentUser.username}
             className="input-field"
-          />
+            onChange={handleChange}
+            />
 
           {/* Email */}
           <input
@@ -121,6 +161,7 @@ export default function DashProfile() {
             placeholder="Email"
             defaultValue={currentUser.email}
             className="input-field"
+            onChange={handleChange}
           />
 
           {/* Password */}
@@ -129,6 +170,7 @@ export default function DashProfile() {
             id="password"
             placeholder="Password"
             className="input-field"
+            onChange={handleChange}
           />
 
           {/* Update Button */}

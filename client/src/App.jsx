@@ -1,5 +1,6 @@
 import React from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { Toaster } from 'react-hot-toast';
 import Home from './pages/Home'
 import About from './pages/About'
 import Dashboard from './pages/Dashboard'
@@ -14,6 +15,7 @@ export default function App() {
     <div className="flex flex-col min-h-screen">
       <BrowserRouter>
         <Header />
+        <Toaster position="top-center" toastOptions={{ duration: 3000 }} /> 
         <main className="flex-grow flex flex-col">
           <Routes>
             <Route path="/" element={<Home />} />
