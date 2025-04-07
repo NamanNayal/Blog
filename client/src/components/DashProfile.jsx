@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector,useDispatch } from "react-redux";
 import { motion } from "framer-motion";
-import {updateStart, updateSuccess, updateFailure} from '../redux/user/userSlice';
+import {updateStart, updateSuccess, updateFailure,deleteUserStart,deleteUserFaliure,deleteUserSuccess} from '../redux/user/userSlice';
 import { toast } from 'react-hot-toast';
 
 
@@ -13,6 +13,7 @@ export default function DashProfile() {
   const [uploading, setUploading] = useState(false);
   const filePickerRef = useRef();
   const [formData, setFormData] = useState({});
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const dispatch = useDispatch();
 
   const handleImageFile = (e) =>{
@@ -107,7 +108,23 @@ export default function DashProfile() {
       toast.error(error.message || 'Something went wrong.');
     }
   }
-  
+ const handleDeleteUser = async() =>{
+  setShowConfirmDelete(false);
+  try{
+    dispatch(deleteUserStart());
+    const res = await fetch(`/api/user/delete/${currentUser._id}`,{
+      method: 'DELETE',
+    });
+    const data = await res.json()
+    if(!res.ok){
+      dispatch(deleteUserFaliure(data.message));
+    }else{
+      dispatch(deleteUserSuccess(data));
+    }
+  }catch(error){
+    dispatch(deleteUserFaliure(error.message));
+  }
+ } 
 
   
 
@@ -181,13 +198,34 @@ export default function DashProfile() {
 
         {/* Delete & Sign Out */}
         <div className="flex justify-between w-full mt-1 text-sm">
-          <button className="bg-btn-primaryRed py-2 px-4 rounded-md">
+          <button
+          onClick={()=>setShowConfirmDelete(true)} className="bg-btn-primaryRed py-2 px-4 rounded-md">
             Delete Account
           </button>
           <button className="bg-btn-primaryRed py-2 px-4 rounded-md">
             Sign Out
           </button>
         </div>
+        {
+          showConfirmDelete &&(
+            <div className="modal-overlay">
+              <div className="modal-container">
+                <h2 className="modal-header">Confirm Deletion</h2>
+                <p>Are you sure you want to delete your account? This action cannot be undone.</p>
+
+                <div className="modal-actions">
+                  <button onClick={()=> setShowConfirmDelete(false)} className="bg-btn-secondary px-4 py-2 rounded-md">
+                    Cancel
+                  </button>
+                  <button onClick={handleDeleteUser} className="bg-btn-primaryRed px-4 py-2 rounded-md">
+                    Confirm
+                  </button>
+
+                </div>
+              </div>
+            </div>
+          )
+        }
       </div>
     </div>
   );

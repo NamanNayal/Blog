@@ -160,4 +160,21 @@ color: #e6e6ff;
   @apply border-t border-gray-600;
 }
 
+/* Modal */
 
+.modal-overlay{
+  @apply fixed inset-0 flex items-center justify-center  bg-black/50 z-50;
+}
+
+.modal-container{
+  @apply p-6 shadow-xl rounded-2xl w-[90%] max-w-md
+  bg-[#e6e6ff] dark:bg-[#1B2433] text-[#393e46] dark:text-[#E6E6FF];
+}
+
+.modal-header{
+  @apply text-xl font-semibold mb-4;
+}
+
+.modal-actions{
+  @apply flex justify-end gap-4 mt-6;
+}

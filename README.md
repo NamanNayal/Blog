@@ -39,3 +39,20 @@ complete update user profile page functionality
     Only the correct user can delete their account.
     Invalid tokens or mismatched IDs should return appropriate errors.
 }
+
+10. Delete User UI{
+    1. Add a "Delete Account" button
+    2. Create a confirmation modal component
+    3. Use useState to toggle modal visibility
+    4. Show modal on delete button click                
+    5. Add Cancel and Confirm buttons in the modal
+    6. Close modal on Cancel click
+    7. Trigger deletion function on Confirm click
+    8. Make DELETE request to backend with user ID
+    9. Dispatch appropriate Redux actions
+    10. Handle API response success or failure
+    11. Update UI state based on Redux store
+    12. Implement backend controller to delete user
+    13. Secure route by verifying user identity
+    14. Send appropriate success or error response from backend
+}
