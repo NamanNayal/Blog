@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Logo from '../assets/svg/13.svg';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleTheme } from "../redux/theme/themeSlice";
+import { signOutSuccess } from "../redux/user/userSlice";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
@@ -10,6 +11,23 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
   const theme = useSelector(state => state.theme);
+
+  const handleSignOut = async() =>{
+    try{
+      const res = await fetch('/api/user/signout',{
+        method: 'POST',
+      });
+      const data = await res.json();
+      if(!res.ok){
+        console.log(data.message);
+      }else{
+        dispatch(signOutSuccess());
+      }
+
+    }catch(error){
+      console.log(error);
+    }
+  }
 
   return (
     <nav className="w-full h-16 md:h-20 flex items-center justify-between">
@@ -54,7 +72,7 @@ const Navbar = () => {
 
         {/* Theme Toggle for Mobile */}
     <button
-      className={`w-12 h-10 flex items-center justify-center rounded-full transition-all duration-300 ease-in-out focus:outline-none
+      className={`w-12 h-10 flex items-center justify-center rounded-full transition-all duration-300 ease-in-out focus:outline-none cursor-pointer
         ${theme.theme === "light" ? "bg-gray-200 text-gray-800 hover:bg-gray-300" : "bg-[#222831] text-[#E6E6FF] hover:bg-[#3A3A47]"}`}
       onClick={() => dispatch(toggleTheme())}
     >
@@ -67,7 +85,7 @@ const Navbar = () => {
     <Link to="/" onClick={() => setOpen(false)}>Home</Link>
     <Link to="/posts?sort=trending" onClick={() => setOpen(false)}>Trending</Link>
     <Link to="/posts?sort=popular" onClick={() => setOpen(false)}>Most Popular</Link>
-    <Link to="/" onClick={() => setOpen(false)}>About</Link>
+    <Link to="/about" onClick={() => setOpen(false)}>About</Link>
 
 
 
@@ -75,7 +93,7 @@ const Navbar = () => {
       <>
         <Link to="/profile" onClick={() => setOpen(false)}>Profile</Link>
         <Link to="/sign-out" onClick={() => setOpen(false)}>
-          <button className="py-2 px-4 rounded-3xl bg-btn-primary cursor-pointer">
+          <button onClick={handleSignOut} className="py-2 px-4 rounded-3xl bg-btn-primary cursor-pointer">
             Sign out
           </button>
         </Link>
@@ -94,12 +112,12 @@ const Navbar = () => {
         <Link to="/">Home</Link>
         <Link to="/about">About</Link>
         <Link to="/projects">Projects</Link>
-        <button className={`w-12 h-10 hidden sm:inline-flex items-center justify-center rounded-full transition-all duration-300 ease-in-out focus:outline-none ${theme.theme === "light" ? "bg-gray-200 text-gray-800 hover:bg-gray-300 hover:shadow-md ": "bg-[#222831] text-[#E6E6FF]  hover:bg-[#3A3A47] hover:shadow-lg"} `}
+        <button className={`w-12 h-10 hidden sm:inline-flex items-center justify-center rounded-full transition-all duration-300 ease-in-out focus:outline-none cursor-pointer ${theme.theme === "light" ? "bg-gray-200 text-gray-800 hover:bg-gray-300 hover:shadow-md ": "bg-[#222831] text-[#E6E6FF]  hover:bg-[#3A3A47] hover:shadow-lg"} `}
         onClick={() => dispatch(toggleTheme())}>
           {theme.theme === "light" ? (
-             <i className="fa-solid fa-sun text-yellow-500 text-xl cursor-pointer"></i>
+             <i className="fa-solid fa-sun text-yellow-500 text-xl"></i>
             ) : (
-              <i className="fa-solid fa-moon text-blue-400 text-xl cursor-pointer"></i>
+              <i className="fa-solid fa-moon text-blue-400 text-xl"></i>
             )}
           
         </button>
@@ -125,7 +143,7 @@ const Navbar = () => {
                 <p className="dropdown-item">Profile</p>
               </Link>
               <div className="dropdown-divider"></div>
-              <p className="dropdown-item">Sign out</p>
+              <p onClick={handleSignOut} className="dropdown-item">Sign out</p>
             </div>
           )}
         </>

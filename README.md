@@ -56,3 +56,17 @@ complete update user profile page functionality
     13. Secure route by verifying user identity
     14. Send appropriate success or error response from backend
 }
+
+11. SignOut functionality{
+    1. created signout controller in backend to clear access_token cookie and send response
+    2. added POST /signout route in Express, no token verification required as 
+        - Main goal of signout = remove the token from the client (cookie/localStorage).
+        - If the token is already expired/invalid, verification fails → user gets stuck and can't sign out.
+        - If the token is valid, no real harm in just clearing it without checking.
+        - We're not performing any sensitive action here — just removing a cookie.
+        - This route is safe and idempotent — hitting it multiple times won't cause issues.
+    3. created signoutSuccess reducer in userSlice to reset user state
+    4. added handleSignOut function everywhere where signout is required to:
+    - send POST request to /api/user/signout
+    - dispatch signoutSuccess() on success
+}

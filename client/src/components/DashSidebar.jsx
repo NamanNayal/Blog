@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
+import { signOutSuccess } from "../redux/user/userSlice";
 
 export default function DashSidebar() {
     const location = useLocation();
     const [tab, setTab] = useState("");
+    const dispatch = useDispatch();
 
     useEffect(() => {
       const urlParams = new URLSearchParams(location.search);
@@ -13,6 +15,23 @@ export default function DashSidebar() {
         setTab(tabFromUrl);
       }
     }, [location.search]);
+
+    const handleSignOut = async() =>{
+      try{
+        const res = await fetch('/api/user/signout',{
+          method:'POST'
+        });
+        const data = await res.json();
+        if(!res.ok){
+          console.log(data.message);
+        }else{
+          dispatch(signOutSuccess());
+        }
+
+      }catch(error){
+        console.log(error);
+      }
+    }
   
     return (
       <div className="w-full md:w-56 p-4 rounded-lg shadow-md transition-all
@@ -36,7 +55,7 @@ export default function DashSidebar() {
   
           {/* Sign Out Button */}
           <li>
-            <button className="w-full flex items-center gap-3 p-3 rounded-lg transition-all 
+            <button onClick={handleSignOut} className="w-full flex items-center gap-3 p-3 rounded-lg transition-all 
             bg-btn-primaryRed
               ">
               <i className="fa-solid fa-arrow-right-from-bracket text-lg"></i>

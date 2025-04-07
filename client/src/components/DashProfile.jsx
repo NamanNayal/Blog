@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector,useDispatch } from "react-redux";
 import { motion } from "framer-motion";
-import {updateStart, updateSuccess, updateFailure,deleteUserStart,deleteUserFaliure,deleteUserSuccess} from '../redux/user/userSlice';
+import {updateStart, updateSuccess, updateFailure,deleteUserStart,deleteUserFaliure,deleteUserSuccess, signOutSuccess} from '../redux/user/userSlice';
 import { toast } from 'react-hot-toast';
 
 
@@ -126,6 +126,25 @@ export default function DashProfile() {
   }
  } 
 
+ const handleSignOut = async() =>{
+    try{
+      const res = await fetch('api/user/signout',{
+        method: 'POST',
+      });
+      const data = await res.json();
+      if(!res.ok){
+        console.log(data.message);
+      }else{
+        dispatch(signOutSuccess());
+
+      }
+
+    }catch(error){
+      console.log(error.message);
+    }
+      
+ }
+
   
 
   return (
@@ -134,7 +153,7 @@ export default function DashProfile() {
         
         {/* Profile Image */}
         <div className="w-32 h-32 shadow-lg rounded-full overflow-hidden my-4 hover:cursor-pointer" onClick={()=> filePickerRef.current.click()} >
-        <div className="w-32 h-32 relative">
+        <div className="w-32 h-32 ">
   {uploading && (
     <div className="absolute inset-0 flex items-center justify-center">
       <div className="w-36 h-36 rounded-full border-4 border-gray-300 border-t-[#00ADB5] animate-spin"></div>
@@ -202,7 +221,7 @@ export default function DashProfile() {
           onClick={()=>setShowConfirmDelete(true)} className="bg-btn-primaryRed py-2 px-4 rounded-md">
             Delete Account
           </button>
-          <button className="bg-btn-primaryRed py-2 px-4 rounded-md">
+          <button onClick={handleSignOut} className="bg-btn-primaryRed py-2 px-4 rounded-md">
             Sign Out
           </button>
         </div>
