@@ -70,3 +70,10 @@ complete update user profile page functionality
     - send POST request to /api/user/signout
     - dispatch signoutSuccess() on success
 }
+
+12. Add Admin Functionality to the User{
+    1. Add a field (isAdmin) in the Schema with the option
+    2. we dont want our frontend to make changes to isAdmin and let mongodn handle it to prevent previlege abuse, enforced controlled access and keep the app secure and maintainable.
+    3. Adding isAdmin as a key-value pair in the JWT token makes role-based access control faster, cleaner, and scalable, without compromising security — as long as your JWT secret stays secure.
+}
+
