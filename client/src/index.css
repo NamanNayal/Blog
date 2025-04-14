@@ -72,8 +72,7 @@ color: #e6e6ff;
   background-color: #B71C1C; /* Darker red for better depth */
 }
 
-
-  
+/* input-field */
 .input-field {
   @apply w-full px-4 py-2 border rounded-md shadow-sm
          text-gray-800 placeholder-gray-500 bg-white
@@ -82,12 +81,195 @@ color: #e6e6ff;
          dark:focus:ring-[#5A5AFF] dark:focus:border-[#3A3AFF]
          cursor-pointer;
 }
+
 /* Fix for autofill */
 .input-field:-webkit-autofill {
   background-color: transparent !important;
   -webkit-text-fill-color: #E6E6FF !important;
   transition: background-color 5000s ease-in-out 0s;
 }
+
+/* dropdown-category */
+.select-category{
+  @apply border text-gray-800 shadow-sm px-4 py-2   rounded-md bg-white placeholder-gray-500  focus:outline-none focus:ring-2 focus:ring-[#5A5AFF] focus:border-[#3A3AFF]
+  dark:bg-[#222831] dark:text-[#E6E6FF] dark:placeholder-gray-400
+  dark:focus:ring-[#5A5AFF] dark:focus:border-[#3A3AFF]
+  cursor-pointer
+}
+
+/* Custom ReactQuill styling */
+.quill-editor {
+  @apply h-72 mb-6 overflow-hidden border rounded-lg shadow-sm text-[#E6E6FF] bg-white
+    focus:outline-none focus:ring-2 focus:ring-[#5A5AFF] focus:border-[#3A3AFF]
+    dark:bg-[#222831] dark:text-[#E6E6FF] dark:placeholder-gray-400
+    dark:focus:ring-[#5A5AFF] dark:focus:border-[#3A3AFF] ;
+}
+
+.quill-editor-wrapper {
+  @apply bg-white dark:bg-[#393E46] text-black dark:text-[#EEEEEE] min-h-[300px] rounded-md;
+}
+
+.quill-editor {
+  @apply min-h-[200px] rounded-md;
+}
+/* hide scrollbar for ReactQuill toolbar on mobile */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+
+.quill-editor-container {
+  width: 100%;        /* Make sure it takes up full width of its parent container */
+  max-width: 700px;   /* Set fixed width (can be adjusted to your needs) */
+  overflow: hidden;   /* Hide anything that overflows horizontally */
+}
+
+.quill-editor .ql-editor {
+  min-height: 200px; /* Set the minimum height for the editor */
+  width: 100%;       /* Make sure the editor content doesn't overflow horizontally */
+  max-width: 100%;   /* Don't allow the editor to exceed container's width */
+  overflow-y: auto;  /* Vertical scrolling for content */
+}
+
+
+/* Quill editor content */
+.quill-editor .ql-editor .ql-blank {
+  color: #E6E6FF;
+  font-family: 'Poppins', sans-serif;
+}
+
+.dark .quill-editor .ql-editor {
+  color: #E6E6FF !important;
+}
+
+/* Toolbar text and icons */
+.quill-editor .ql-toolbar {
+  color: #E6E6FF !important;
+  border-color: #E6E6FF;
+}
+
+.dark .quill-editor .ql-toolbar {
+  color: #E6E6FF;
+  border-color: #E6E6FF;
+}
+
+/* Placeholder text color */
+.quill-editor .ql-editor.ql-blank::before {
+  content: attr(data-placeholder);
+  color: #E6E6FF !important;
+  font-family: 'Poppins', sans-serif;
+  opacity: 1 !important;
+}
+
+/* Dark mode */
+.dark .quill-editor .ql-editor.ql-blank::before {
+  color: #E6E6FF !important;
+}
+
+/* Toolbar icons/buttons */
+.quill-editor .ql-toolbar button,
+.quill-editor .ql-toolbar .ql-picker,
+.quill-editor .ql-toolbar .ql-picker-label,
+.quill-editor .ql-toolbar .ql-picker-options {
+  color: inherit;
+  fill: currentColor;
+}
+
+/* Dark mode toolbar icons */
+.dark .quill-editor .ql-toolbar button,
+.dark .quill-editor .ql-toolbar .ql-picker,
+.dark .quill-editor .ql-toolbar .ql-picker-label,
+.dark .quill-editor .ql-toolbar .ql-picker-options {
+  color: #E6E6FF !important;
+  fill: #E6E6FF !important;
+}
+
+/* Toolbar button icons (SVGs) and labels */
+.ql-toolbar .ql-stroke,
+.ql-toolbar .ql-fill,
+.ql-toolbar .ql-picker,
+.ql-toolbar .ql-picker-label,
+.ql-toolbar .ql-picker-options,
+.ql-toolbar button {
+  color: #E6E6FF !important;
+  stroke: #E6E6FF !important;
+}
+
+/* Hover states */
+.ql-toolbar button:hover .ql-stroke,
+.ql-toolbar button:hover .ql-fill,
+.ql-toolbar button:hover .ql-picker-label,
+.ql-toolbar .ql-picker-label:hover,
+.ql-toolbar .ql-picker-options:hover {
+  color: #5A5AFF !important;
+  fill: #5A5AFF !important;
+  stroke: #5A5AFF !important;
+}
+
+/* Picker label color */
+.quill-editor .ql-toolbar .ql-picker-label {
+  color: #E6E6FF !important;
+  border-radius: 0.375rem; /* rounded-md */
+  border: 1px solid #5A5AFF; /* optional border around label */
+  padding: 4px 8px;
+}
+
+/* Picker options dropdown - Light Mode */
+.quill-editor .ql-toolbar .ql-picker-options {
+  background-color: #222831 !important;
+  color: #E6E6FF !important;
+  border-radius: 0.375rem; /* rounded-md */
+  border: 1px solid #5A5AFF;
+  overflow: hidden;
+}
+
+/* Picker options dropdown - Dark Mode */
+.dark .quill-editor .ql-toolbar .ql-picker-options {
+  background-color: #222831 !important;
+  color: #E6E6FF !important;
+}
+
+/* Optional: hover effect on picker options */
+.quill-editor .ql-toolbar .ql-picker-options .ql-picker-item:hover {
+  background-color: #F0F0FF; /* Light tint */
+}
+
+.dark .quill-editor .ql-toolbar .ql-picker-options .ql-picker-item:hover {
+  background-color: #3A3AFF; /* Same blue as button hover */
+  color: #E6E6FF;
+  border-radius: 0.375rem; /* rounded-md */
+  border: 1px solid #5A5AFF;
+  overflow: hidden;
+}  
+
+.quill-editor-container {
+  width: 100%; /* Full width of its parent container */
+    /* Set fixed width (can be adjusted) */
+  overflow: hidden;   /* Hide any horizontal overflow */
+  position: relative; /* Make it relative for positioning toolbar */
+}
+
+.quill-editor .ql-toolbar {
+  top: 0;             /* Stick it to the top of the editor container */
+  background-color: #222831; /* Background color for the toolbar */
+
+}
+
+.quill-editor .ql-editor {
+  min-height: 200px;  /* Minimum height for the editor */
+  width: 100%;        /* Ensure editor width does not exceed container */
+  max-width: 100%;    /* Do not allow editor to exceed container's width */
+  overflow-y: auto;   /* Vertical scrolling when content overflows */
+  padding-top: 20px;  /* Prevent content from overlapping with toolbar */
+}
+
+
+
+
 
 
 /* Dropdown Container */
@@ -178,3 +360,5 @@ color: #e6e6ff;
 .modal-actions{
   @apply flex justify-end gap-4 mt-6;
 }
+
+

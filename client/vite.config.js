@@ -13,5 +13,9 @@ export default defineConfig({
       }
     }
   },
-  plugins: [react(),tailwindcss(),],
+  plugins: [react(),tailwindcss(),
+  ],
+  optimizeDeps: {
+    include: ['suneditor-react']
+  }
 })

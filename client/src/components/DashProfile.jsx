@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector,useDispatch } from "react-redux";
-import { motion } from "framer-motion";
-import {updateStart, updateSuccess, updateFailure,deleteUserStart,deleteUserFaliure,deleteUserSuccess, signOutSuccess} from '../redux/user/userSlice';
+import {updateStart, updateSuccess, updateFailure,deleteUserStart,deleteUserFailure,deleteUserSuccess, signOutSuccess} from '../redux/user/userSlice';
 import { toast } from 'react-hot-toast';
+import { Link } from "react-router-dom";
+import Loading from "./Loading";
 
 
 export default function DashProfile() {
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser, loading } = useSelector((state) => state.user);
   const [imageFile, setImageFile] = useState(null);
   const [imageFileUrl, setImageFileUrl] = useState(null);
   const [imageFileUploadError, setImageFileUploadError] = useState(null);
@@ -30,7 +31,6 @@ export default function DashProfile() {
     }
     
   };
-  console.log(imageFile, imageFileUrl);
 
   useEffect(()=>{
     if(imageFile){
@@ -47,16 +47,16 @@ export default function DashProfile() {
     setUploading(true);
     setImageFileUploadError(null);
 
-    const formData = new FormData();
-    formData.append('file', imageFile);
-    formData.append('upload_preset', 'mern-blog'); // Set  in Cloudinary settings
+    const cloudinaryFormData = new FormData();
+    cloudinaryFormData.append('file', imageFile);
+    cloudinaryFormData.append('upload_preset', 'mern-blog'); // Set  in Cloudinary settings
   
     try {
       const response = await fetch(
         'https://api.cloudinary.com/v1_1/dkic3fn8d/image/upload',
         {
           method: 'POST',
-          body: formData,
+          body: cloudinaryFormData,
         }
       );
   
@@ -105,7 +105,7 @@ export default function DashProfile() {
 
     }catch(error){
       dispatch(updateFailure(error.message));
-      toast.error(error.message || 'Something went wrong.');
+      toast.error(typeof error.message === 'string' ? error.message : 'Something went wrong.');
     }
   }
  const handleDeleteUser = async() =>{
@@ -117,12 +117,12 @@ export default function DashProfile() {
     });
     const data = await res.json()
     if(!res.ok){
-      dispatch(deleteUserFaliure(data.message));
+      dispatch(deleteUserFailure(data.message));
     }else{
       dispatch(deleteUserSuccess(data));
     }
   }catch(error){
-    dispatch(deleteUserFaliure(error.message));
+    dispatch(deleteUserFailure(error.message));
   }
  } 
 
@@ -148,17 +148,19 @@ export default function DashProfile() {
   
 
   return (
+    <>
+    {loading && <Loading text="Updating profile..." overlay />}
+    {uploading && <Loading text="Uploading Image..." overlay/>}
+
     <div className="flex justify-center items-center w-full transition-all ease-in-out">
       <div className="flex flex-col gap-8 max-w-lg w-full p-6 rounded-lg shadow-md items-center  ">
         
         {/* Profile Image */}
-        <div className="w-32 h-32 shadow-lg rounded-full overflow-hidden my-4 hover:cursor-pointer" onClick={()=> filePickerRef.current.click()} >
+        <div className="w-32 h-32 shadow-lg rounded-full overflow-hidden my-4 hover:cursor-pointer " onClick={()=> filePickerRef.current.click()} >
         <div className="w-32 h-32 ">
-  {uploading && (
-    <div className="absolute inset-0 flex items-center justify-center">
-      <div className="w-36 h-36 rounded-full border-4 border-gray-300 border-t-[#00ADB5] animate-spin"></div>
-    </div>
-  )}
+
+
+  
   <img
     src={imageFileUrl || currentUser.profilePicture}
     alt="user"
@@ -178,7 +180,7 @@ export default function DashProfile() {
         <h1 className="text-3xl font-semibold text-center hover:cursor-pointer">Profile</h1> 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">
           {/* Image Upload */}
-          <input type="file" accept="image/*" onChange={handleImageFile} ref={filePickerRef} hidden/>
+          <input type="file" accept="image/*" onChange={handleImageFile} ref={filePickerRef} hidden aria-label="Upload profile image"/>
           
           {/* Username */}
           <input
@@ -210,9 +212,19 @@ export default function DashProfile() {
           />
 
           {/* Update Button */}
-          <button type="submit" className="bg-btn-primary w-full py-2 px-4 rounded-md font-semibold">
-            Update
+          <button type="submit" className="bg-btn-primary w-full py-2 px-4 rounded-md font-semibold"
+          disabled={loading || uploading}>
+            {loading ? 'Loading..': 'Update Profile'}
           </button>
+          {
+            currentUser.isAdmin && (
+              <Link to={'/create-post'}>
+                <button type='button' className="bg-btn-primary w-full py-2 px-4 rounded-md font-semibold">
+                  Create a Post
+                </button>
+              </Link>
+            )
+          }
         </form>
 
         {/* Delete & Sign Out */}
@@ -247,5 +259,6 @@ export default function DashProfile() {
         }
       </div>
     </div>
+    </>
   );
 }
