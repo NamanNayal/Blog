@@ -77,3 +77,18 @@ complete update user profile page functionality
     3. Adding isAdmin as a key-value pair in the JWT token makes role-based access control faster, cleaner, and scalable, without compromising security — as long as your JWT secret stays secure.
 }
 
+13. create post page UI{
+    1. we want to ensure only admin can access the create post page, we want to create a route which will verify the user and then load the component
+    2. we will very from redux state if the current user exist and is a admin if yes then we want him to redirect to the create post page else redirect to sign in
+    3. to create a post page UI we will use flowbite components
+}
+
+14. Create Post API{
+    1. check for the admin, check browser for cookie 
+    2. we want to define a Post Schema 
+    3. we will create a seperate route for post api,
+    4. we want to ensure the user who create the post should be logged in and must be a admin
+    5. check for validations, like is admin, title and content present, and for a UrL friendly version for title create a slug (It’s typically lowercase, uses hyphens instead of spaces, and removes special characters.)
+    6. and save the Post in the db
+}
+
