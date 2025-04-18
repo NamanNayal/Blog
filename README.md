@@ -92,3 +92,30 @@ complete update user profile page functionality
     6. and save the Post in the db
 }
 
+15. Handle Image {
+    1. create state for
+        -storing actual image
+        -for image preivew
+        -tracking uploading status
+        -for formData which uses a object to store
+    
+    2. handleUploadImage an async call
+        -check if image exisit to upload
+        -create a in built js FormData object and add key value pairs of file and preset, and then make a HTTP request to cloudinary api sending the data, once we recive a response we want to update it into formData, with live url which then can be used for preview and storing in db, and finally handling state like uploading and error, and similar state handle in catch
+    
+    3. Image Upload Ui 
+        -User selects a file.
+        -selectedFile = e.target.files[0]
+        -FileReader() instance is created.
+        -You define onload = (event) => {            setFilePreview(event.target.result) }
+        -Then: reader.readAsDataURL(selectedFile)
+        -FileReader reads file in background.
+        -When done, onload fires.
+        -Base64 string appears in event.target.result.
+        -You store it in state → component re-renders → image is previewed.
+
+    4. -Check if filePreview exists and render the preview image if true.
+       -If not, check if formData.image exists and render the uploaded image if true.
+       -If neither exists, render the default upload interface.
+       -if image is being uploaded or error exisit we want to show a alert or loading component
+}
