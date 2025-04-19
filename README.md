@@ -119,3 +119,23 @@ complete update user profile page functionality
        -If neither exists, render the default upload interface.
        -if image is being uploaded or error exisit we want to show a alert or loading component
 }
+
+16. Publishing a post  {
+    1. add event lstener on text-editor, select-category, title and update forData with a key value pair
+    2. finnally a event listener on form
+        - a HTTP POST req to create api, sending a js object by converting it to JSON string
+        - convert response from a JSON string to js object and store it in a variable
+        - a state for handling error while submitting form
+        -if res is ok we navigate to another page, and state to null
+        -API returned an error code	if (!res.ok)
+        Network/JS error occurred	catch block
+    
+    3.      Purpose             InitialState
+            Waiting for data	    null
+            Object with fields	    {}
+            List of things	        []
+            Text field	            ''
+            Toggle / flag	      true/false
+
+
+}
