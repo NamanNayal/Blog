@@ -139,3 +139,8 @@ complete update user profile page functionality
 
 
 }
+17. add post section to the dashboard {
+    1. create a Dashboard Post Component
+    2. get currentUser, if currentUser.isAdmin, then we want to load a list which links the dashpost,
+    3. we are tracking url parameters with tab state, using useLocation and URLSearchParams(), if tab value is posts then we want to load DashPosts
+}

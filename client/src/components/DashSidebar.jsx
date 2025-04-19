@@ -3,10 +3,12 @@ import { useSelector, useDispatch } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 import { signOutSuccess } from "../redux/user/userSlice";
 
+
 export default function DashSidebar() {
     const location = useLocation();
     const [tab, setTab] = useState("");
     const dispatch = useDispatch();
+    const {currentUser} = useSelector((state)=> state.user);
 
     useEffect(() => {
       const urlParams = new URLSearchParams(location.search);
@@ -52,6 +54,22 @@ export default function DashSidebar() {
               <span>Profile</span>
             </Link>
           </li>
+
+          {currentUser && currentUser.isAdmin && (
+            <li>
+              <Link to='/dashboard?tab=posts'>
+                <div
+                  className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition ${tab === 'posts' ? 'text-white bg-gray-200 dark:bg-gray-800' : 'hover:bg-gray-800 dark:hover:bg-gray-800 '}`}
+              
+                  >
+                  <i className="fa-solid fa-file-lines text-lg"></i>
+
+                  <span>Posts</span>
+
+                </div>
+              </Link>
+            </li>
+          )}
   
           {/* Sign Out Button */}
           <li>
