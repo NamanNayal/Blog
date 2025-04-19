@@ -144,3 +144,14 @@ complete update user profile page functionality
     2. get currentUser, if currentUser.isAdmin, then we want to load a list which links the dashpost,
     3. we are tracking url parameters with tab state, using useLocation and URLSearchParams(), if tab value is posts then we want to load DashPosts
 }
+
+18. getpost api{
+    -Parse pagination and sort params.
+    -Build dynamic filter object from query.
+    -Fetch filtered posts with sort, skip, and limit.
+    -Count total posts.
+    -Calculate date for one month ago.
+    -Count posts created in the last month.
+    -Return all data in JSON response.
+    -Catch and forward any errors.
+}
