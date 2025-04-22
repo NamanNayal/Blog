@@ -7,6 +7,8 @@ export default function DashPosts() {
   const {theme} = useSelector((state)=> state.theme); 
   const [userPosts, setUserPosts] = useState([]);
   const [showMorePost , setShowMorePost] = useState(true);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [postIdToDelete, setPostIdToDelete] = useState('');
   
   useEffect(() => {
     const fetchPosts = async () => {
@@ -49,6 +51,24 @@ export default function DashPosts() {
 
   }
 
+  const handleDeletePost = async () =>{
+    setShowDeleteModal(false);
+    try{
+      const res = await fetch(`/api/post/deletepost/${postIdToDelete}/${currentUser._id}`,{
+        method: 'DELETE',    
+      });
+      const data = await res.json();
+      if(!res.ok){
+        console.log(data.message);
+      }else{
+        setUserPosts((prev)=> prev.filter((post)=> post._id !==postIdToDelete));
+      }
+
+    }catch(error){
+      console.log(error.message);
+    }
+  }
+
 
   
   return (
@@ -87,7 +107,10 @@ export default function DashPosts() {
                       >
                         Edit
                       </Link>
-                      <span className="text-[#E53935] hover:text-[#C62828] cursor-pointer font-semibold transition duration-200 ease-in-out ">
+                      <span className="text-[#E53935] hover:text-[#C62828] cursor-pointer font-semibold transition duration-200 ease-in-out " onClick={()=>{
+                        setShowDeleteModal(true);
+                        setPostIdToDelete(post._id);
+                      }}>
                         Delete
                       </span>
                     </div>
@@ -159,7 +182,7 @@ export default function DashPosts() {
                           {post.category}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="text-[#E53935] hover:text-[#C62828] cursor-pointer font-semibold transition duration-200 ease-in-out r">
+                          <span className="text-[#E53935] hover:text-[#C62828] cursor-pointer font-semibold transition duration-200 ease-in-out " onClick={()=> {setShowDeleteModal(true); setPostIdToDelete(post._id);}}>
                             Delete
                           </span>
                         </td>
@@ -190,6 +213,25 @@ export default function DashPosts() {
           </>
         ) : (
           <p className="text-gray-500 dark:text-gray-400 px-3">You have no posts yet!</p>
+        )}
+
+        {showDeleteModal && (
+                      <div className="modal-overlay">
+                      <div className="modal-container">
+                        <h2 className="modal-header">Confirm Deletion</h2>
+                        <p>Are you sure you want to delete this Post? This action cannot be undone.</p>
+        
+                        <div className="modal-actions">
+                          <button onClick={()=> setShowDeleteModal(false)} className="bg-btn-secondary px-4 py-2 rounded-md">
+                            Cancel
+                          </button>
+                          <button onClick={handleDeletePost} className="bg-btn-primaryRed px-4 py-2 rounded-md">
+                            Confirm
+                          </button>
+        
+                        </div>
+                      </div>
+                    </div>
         )}
       </div>
     </div>

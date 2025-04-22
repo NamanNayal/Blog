@@ -179,3 +179,19 @@ complete update user profile page functionality
     -If the number of new posts is less than 9, set `setShowMore` to false.
     -Log any errors that occur during the fetch.
 }
+
+21 Delete Post {
+    -create router for delete request
+    -pass two things userId and postId to be sure if the owner of the post is deleting it, verify the user if it is admin, and then handle the delete function
+    -check if user is admin and userId matches the req.params
+    -perform findByIdDelete() operation
+    
+    -every time user click the delete button we want a modal to show up which ask for confirmation
+    -we want to handleDeletePost function if user confirms
+    
+    handleDeletePost
+        -setModal to false
+        -send a req to api with postIdToDelete and currentUserId with a HTTP DELETE method
+        -if res.ok then we want to setUserPosts filtering them by only keeping post that does not matches the postIdToDelete
+
+}
