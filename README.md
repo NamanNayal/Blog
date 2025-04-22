@@ -155,3 +155,18 @@ complete update user profile page functionality
     -Return all data in JSON response.
     -Catch and forward any errors.
 }
+
+19. DashPosts component {
+    - Import React, useEffect, useState,            useSelector, and Link.
+    - Get currentUser from Redux store.
+    - Define state to hold posts (userPosts).
+    - On mount, check if user is admin.
+    - If admin, fetch posts using currentUser._id.
+    - Await response and update userPosts state if successful.
+    - Log errors if fetch fails.
+    - Render two UI layouts based on screen size:
+        • Mobile view – card layout for each post.
+        • Desktop view – table format for posts.
+    - Show post image, title (linked), updated date, category, and edit/delete options.
+    - Show fallback text if no posts found.
+}
