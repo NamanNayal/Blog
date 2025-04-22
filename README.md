@@ -170,3 +170,12 @@ complete update user profile page functionality
     - Show post image, title (linked), updated date, category, and edit/delete options.
     - Show fallback text if no posts found.
 }
+
+20.Add show more Functionality {
+    =Set `startIndex` to the current length of `userPosts`.
+    -Fetch posts starting from `startIndex` with `userId` and `startIndex` as query parameters.
+    -Parse the response as JSON.
+    -If the response is successful, append the new posts to `userPosts`.
+    -If the number of new posts is less than 9, set `setShowMore` to false.
+    -Log any errors that occur during the fetch.
+}

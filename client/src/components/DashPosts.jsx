@@ -4,7 +4,9 @@ import { Link } from 'react-router-dom';
 
 export default function DashPosts() {
   const { currentUser } = useSelector((state) => state.user);
+  const {theme} = useSelector((state)=> state.theme); 
   const [userPosts, setUserPosts] = useState([]);
+  const [showMorePost , setShowMorePost] = useState(true);
   
   useEffect(() => {
     const fetchPosts = async () => {
@@ -15,6 +17,9 @@ export default function DashPosts() {
         
         if (res.ok) {
           setUserPosts(data.posts);
+          if(data.posts.length < 9 ){
+            setShowMorePost(false);
+          }
         }
       } catch (error) {
         console.log("Error fetching posts:", error.message);
@@ -25,6 +30,26 @@ export default function DashPosts() {
       fetchPosts();
     }
   }, [currentUser]);
+
+  const handleShowMorePosts = async () =>{
+    const startIndex = userPosts.length;
+    try{
+      const res = await fetch(`/api/post/getposts?userId=${currentUser._id}&start=${startIndex}`);
+      const data = await res.json();
+      if(res.ok){
+        setUserPosts((prev)=> [...prev,  ...data.posts]);
+        if(data.posts.length < 9){
+          setShowMorePost(false);
+        }
+      }
+    }catch(error){
+      console.log(error.message);
+    }
+
+
+  }
+
+
   
   return (
     <div className="w-full h-full flex flex-col items-start justify-start pt-8 pb-8">
@@ -34,7 +59,7 @@ export default function DashPosts() {
             {/* For mobile view: card-based layout */}
             <div className="lg:hidden w-full space-y-4 px-3">
               {userPosts.map((post) => (
-                <div key={post._id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+                <div key={post._id} className={`${theme === 'light' ? 'bg-[#e0e0fa] shadow-md' : 'bg-gray-800 shadow-gray-700'} rounded-lg overflow-hidden`}>
                   <div className="p-4">
                     <div className="flex items-center mb-3">
                       <img
@@ -44,62 +69,72 @@ export default function DashPosts() {
                       />
                       <Link
                         to={`/post/${post.slug}`}
-                        className="font-medium text-gray-900 dark:text-white text-lg hover:underline"
+                        className={`font-medium ${theme === 'light' ? 'text-gray-900' : 'text-white'} text-lg hover:underline`}
                       >
                         {post.title}
                       </Link>
                     </div>
                     
-                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                    <div className={`text-sm ${theme === 'light' ? 'text-gray-700' : 'text-gray-400'} mb-2`}>
                       <span className="block">Updated: {new Date(post.updatedAt).toLocaleDateString()}</span>
                       <span className="block">Category: {post.category}</span>
                     </div>
                     
-                    <div className="flex justify-between mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                    <div className={`flex justify-between mt-3 pt-3 border-t ${theme === 'light' ? 'border-gray-400' : 'border-gray-700'}`}>
                       <Link
                         to={`/update-post/${post._id}`}
-                        className="text-teal-500 hover:underline font-medium"
+                        className="text-[#5A5AFF] hover:text-[#3A3AFF] transition duration-400 ease-in-out   font-semibold"
                       >
                         Edit
                       </Link>
-                      <span className="text-red-500 hover:underline cursor-pointer font-medium">
+                      <span className="text-[#E53935] hover:text-[#C62828] cursor-pointer font-semibold transition duration-200 ease-in-out ">
                         Delete
                       </span>
                     </div>
                   </div>
                 </div>
               ))}
+            {showMorePost && (
+              <div className="flex justify-center mt-6">
+                <button 
+                  onClick={handleShowMorePosts}
+                  className="px-6 py-2 cursor-pointer hover:text-gray-400 transition duration-200 shadow-md"
+                >
+                  Show More
+                </button>
+              </div>
+            )}
             </div>
             
             {/* For tablet and desktop: table layout */}
             <div className="hidden lg:block overflow-x-auto w-full px-3 ">
-              <div className="shadow-md rounded-lg overflow-hidden">
+              <div className={`shadow-md rounded-lg overflow-hidden font ${theme === 'light' ? 'shadow-gray-200' : 'shadow-gray-800'}`}>
                 <table className="min-w-full table-auto ">
-                  <thead className="bg-gray-50 dark:bg-gray-700">
+                  <thead className={`${theme === 'light' ? 'bg-[#e0e0fa]  text-gray-600' : 'bg-gray-700 text-gray-300'} font-sans `}>
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs  uppercase tracking-wider">
                         Date updated
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs  uppercase tracking-wider">
                         Post image
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs  uppercase tracking-wider">
                         Post title
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs uppercase tracking-wider">
                         Category
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs uppercase tracking-wider">
                         Delete
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs uppercase tracking-wider">
                         Edit
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+                  <tbody className={`${theme === 'light' ? 'bg-[#e0e0fa] divide-y divide-gray-300' : 'bg-gray-800 divide-y divide-gray-700'}`}>
                     {userPosts.map((post) => (
-                      <tr key={post._id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                      <tr key={post._id} className={`${theme === 'light' ? 'hover:bg-[#e6e6ff]' : 'hover:bg-gray-700'}`}>
                         <td className="px-6 py-4 whitespace-nowrap">
                           {new Date(post.updatedAt).toLocaleDateString()}
                         </td>
@@ -114,7 +149,7 @@ export default function DashPosts() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <Link
-                            className="font-medium text-gray-900 dark:text-white"
+                            className={`font-medium ${theme === 'light' ? 'text-gray-700' : 'text-white'}`}
                             to={`/post/${post.slug}`}
                           >
                             {post.title}
@@ -124,13 +159,13 @@ export default function DashPosts() {
                           {post.category}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="font-medium text-red-500 hover:underline cursor-pointer">
+                          <span className="text-[#E53935] hover:text-[#C62828] cursor-pointer font-semibold transition duration-200 ease-in-out r">
                             Delete
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <Link
-                            className="text-teal-500 hover:underline"
+                            className="text-[#5A5AFF] hover:text-[#3A3AFF] transition duration-400 ease-in-out   font-semibold"
                             to={`/update-post/${post._id}`}
                           >
                             Edit
@@ -141,6 +176,16 @@ export default function DashPosts() {
                   </tbody>
                 </table>
               </div>
+              {showMorePost && (
+              <div className="flex justify-center mt-6">
+                <button 
+                  onClick={handleShowMorePosts}
+                  className="px-8 py-2 hover:text-gray-400 transition duration-200 shadow-md cursor-pointer"
+                >
+                  Show More
+                </button>
+              </div>
+            )}
             </div>
           </>
         ) : (
