@@ -180,7 +180,7 @@ complete update user profile page functionality
     -Log any errors that occur during the fetch.
 }
 
-21 Delete Post {
+21. Delete Post {
     -create router for delete request
     -pass two things userId and postId to be sure if the owner of the post is deleting it, verify the user if it is admin, and then handle the delete function
     -check if user is admin and userId matches the req.params
@@ -194,4 +194,27 @@ complete update user profile page functionality
         -send a req to api with postIdToDelete and currentUserId with a HTTP DELETE method
         -if res.ok then we want to setUserPosts filtering them by only keeping post that does not matches the postIdToDelete
 
+}
+
+22. Update Post{
+    - similar to create post page
+    - route should be private and available to only admin
+    - extract postId from params using useParams
+    - using useEffect we want to get the post detail of the postId we extracted, and update our forData values and set Error based on that
+    - we need to create an api route to update the post which dynamically gets postId and userId from the params
+    - in updatepost controller we want to check if the user is admin, and the user is the owner of the post
+    - we ensure that only title,content,category and image are only read by the body and gets updated,
+    - we also ensure that image from the body is read in case its not an empty string and it exist 
+    - the Post model we created we will use a method findbyIdandUpdate by giving two parameters id and data to be updated
+    - the id will come from the params dynamically and the updated data object will be passed
+    - we will send the res with status and updated data
+    
+
+    Fixes 
+    1. default image from MongoDB model {
+        - in previous logic we were receiving img from body, which was getting overrided by and empty string, so this time we handle the img only when its a non empty string
+    } 
+    2. Empty string values are being passed to img{
+        - while passing values to img there were few post with empty string, so we added a condition if its empty then use null
+    }
 }

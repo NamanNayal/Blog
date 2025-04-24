@@ -83,7 +83,7 @@ export default function DashPosts() {
                   <div className="p-4">
                     <div className="flex items-center mb-3">
                       <img
-                        src={post.image}
+                        src={post.image || null}
                         alt={post.title}
                         className="w-16 h-12 object-cover bg-gray-500 rounded mr-3"
                       />
@@ -164,7 +164,7 @@ export default function DashPosts() {
                         <td className="px-6 py-4 whitespace-nowrap">
                           <Link to={`/post/${post.slug}`}>
                             <img
-                              src={post.image}
+                              src={post.image || null}
                               alt={post.title}
                               className="w-20 h-10 object-cover bg-gray-500"
                             />

@@ -13,9 +13,20 @@ export const create = async(req, res, next)=>{
     .join('-')
     .toLowerCase().
     replace(/[^a-zA-Z0-9\-]/g, '');
-    const newPost = new Post({
-        ...req.body, slug, userId: req.user.id,
+
+    const postData = new Post({
+        title: req.body.title,
+        content: req.body.content,
+        category: req.body.category || 'uncategorized',
+        slug,
+        userId: req.user.id
     });
+    if(req.body.image && req.body.image.trim() !== ''){
+        postData.image = req.body.image;
+    }
+
+    const newPost = new Post(postData);
+
     try{
         const savedPost = await newPost.save();
         res.status(201).json(savedPost);
@@ -83,6 +94,37 @@ export const deletepost = async(req,res,next)=>{
     try{
         await Post.findByIdAndDelete(req.params.postId);
         res.status(200).json('Post has been deleted successfully!');
+
+    }catch(error){
+        next(error);
+    }
+}
+
+export const updatepost = async(req,res,next)=>{
+
+    if(!req.user.isAdmin || req.user.id !== req.params.userId){
+        return next(errorHandler(403, 'You are not allowed to update this post'));
+    }
+    try{
+
+        const updateData = {
+            title: req.body.title,
+            content: req.body.content,
+            category: req.body.category,
+        }
+
+        if(req.body.image && req.body.image.trim() !== ''){
+            updateData.image = req.body.image;
+        }
+
+        const updatedPost = await Post.findByIdAndUpdate(
+            req.params.postId,
+            {
+                $set:updateData
+            },
+            {new: true}
+        );
+        res.status(200).json(updatedPost);
 
     }catch(error){
         next(error);
