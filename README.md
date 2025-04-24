@@ -218,3 +218,14 @@ complete update user profile page functionality
         - while passing values to img there were few post with empty string, so we added a condition if its empty then use null
     }
 }
+
+23. Get User API {
+    - add a getuser route, which verifies the token and call getUser function
+    - verify if user isAdmin
+    - declare the startIndex, the limit and the sorting direction
+    - use Find method on user schema with then sort,skip and limit usig declared variables
+    - we want user doc to be send without password hence we will destructure the password and return the rest of the data
+    - we will use countDocument method to return total users
+    - we will also find lastMonthUsers 
+    - and send all of these back in response
+}
