@@ -56,6 +56,7 @@ export default function DashSidebar() {
           </li>
 
           {currentUser && currentUser.isAdmin && (
+            <>
             <li>
               <Link to='/dashboard?tab=posts'>
                 <div
@@ -69,6 +70,21 @@ export default function DashSidebar() {
                 </div>
               </Link>
             </li>
+            <li>
+              <Link to='/dashboard?tab=users'>
+                <div
+                  className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition ${tab === 'posts' ? 'text-white bg-gray-200 dark:bg-gray-800' : 'hover:bg-gray-800 dark:hover:bg-gray-800 '}`}
+              
+                  >
+                  <i className="fa-solid fa-users text-lg"></i>
+
+                  <span>Users</span>
+
+                </div>
+              </Link>
+            </li>
+            </>
+            
           )}
   
           {/* Sign Out Button */}

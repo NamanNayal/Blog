@@ -229,3 +229,33 @@ complete update user profile page functionality
     - we will also find lastMonthUsers 
     - and send all of these back in response
 }
+
+24. {
+    - in dashside bar add a new list item users
+    - add a new tab users which loads component dashUsers
+    - use useSelector to get the currentUser and current theme from Redux store
+    - define local states:
+    - users for storing fetched users
+    - showMoreUser to manage "Show More" button visibility
+    - showDeleteModal and userIdToDelete for deletion logic
+    - in useEffect:
+    - call /api/user/getusers to fetch users if current user is admin
+    - update users state with data
+    - check data.posts.length to control showMoreUser visibility (❗should be data.users.length)
+    - define handleShowMoreUsers:
+    - calculate startIndex as users.length
+    - call /api/user/getusers?start=startIndex to fetch next batch
+    - append users using spread operator
+    - check if new batch has fewer than 9 users to hide "Show More" button
+    - define empty handleDeleteUser to implement delete logic later
+    - return two layout blocks:
+    - mobile layout: user info cards
+    - desktop layout: user info table
+    - both show user image, email, username, role (Admin/User), and delete button
+    - render "Show More" button conditionally based on showMoreUser
+    - show delete confirmation modal when delete clicked
+    - Confirm triggers handleDeleteUser
+    - Cancel closes modal
+
+}
+
