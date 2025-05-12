@@ -272,3 +272,10 @@ complete update user profile page functionality
     - fun to fetch post which dynamically takes slug from params and send a req to the api
     - once done we update the Post state with the received element in the array
 }
+
+27. call to action{
+    - create a reusable UI element designed to prompt users to take a specific action
+    - one parent div, two child div
+    - one div for text content
+    - second div for img
+}
