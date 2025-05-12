@@ -230,7 +230,7 @@ complete update user profile page functionality
     - and send all of these back in response
 }
 
-24. {
+24. User UI functionality{
     - in dashside bar add a new list item users
     - add a new tab users which loads component dashUsers
     - use useSelector to get the currentUser and current theme from Redux store
@@ -241,7 +241,7 @@ complete update user profile page functionality
     - in useEffect:
     - call /api/user/getusers to fetch users if current user is admin
     - update users state with data
-    - check data.posts.length to control showMoreUser visibility (❗should be data.users.length)
+    - check data.posts.length to control showMoreUser visibility 
     - define handleShowMoreUsers:
     - calculate startIndex as users.length
     - call /api/user/getusers?start=startIndex to fetch next batch
@@ -259,3 +259,16 @@ complete update user profile page functionality
 
 }
 
+25. delete User{
+    - validate if user is a admin, or the owner
+    - fun call which uses the delete api, which dynamically fetches the user by params, calls a HTTP method DELETE
+    - if we get a response ok we filter out the userIdToDelete from the rest user
+
+}
+
+26. complete post page functionality{
+    - create a route for postPage    
+    - state for loading, error and postdata & postSlug from params 
+    - fun to fetch post which dynamically takes slug from params and send a req to the api
+    - once done we update the Post state with the received element in the array
+}
