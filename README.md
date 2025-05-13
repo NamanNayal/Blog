@@ -279,3 +279,29 @@ complete update user profile page functionality
     - one div for text content
     - second div for img
 }
+
+28. {
+    - scroll to top component which uses pathname from useLocation, to track any changes made to url and useeffect on ever render uses window scrollTo fuction to bring the window on top everytime
+    - create a commentSection component which takes postId as params
+        - check if user is signed and render UI accordingly
+        - state for commentError, comment Content
+        - a handle submit handler which is a async function,
+            - checks comment length
+            - set error state to null
+            - send req to api, and make a POST call, send a header(informs the server about the format of the data being sent.) which tells { 'Content-Type': 'application/json' } sending a JSON data in the req body, In body we are converting js object to JSON string if we dont do this the req will fail
+            - we recive the response object which is a object and not actual data, so we use res.json() provided by fetch to JSON string → JS object
+            - based on response we handle our state
+        
+
+    API {
+        - create a comment route
+        - call the post function to the create route, which verify user is signed in and call creeatecomment function
+        - destructure the content, postid and userid from the body, 
+        -check if the userid matches the signed in user
+        - create a new instance of our model Comment with content,postid and useId as properties
+        - then save them in the db and send the response back
+
+        create comment Model
+    } 
+    
+}
