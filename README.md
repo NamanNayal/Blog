@@ -305,3 +305,23 @@ complete update user profile page functionality
     } 
     
 }
+
+29. show the comment of a post {
+    - create api route which gets the comment
+    - create a getPostComments route which gets the comments dynamically based on the postId, and does not need to verifyToken and is available to see for all
+    - getPostComments => use find method on Comment model to search comment based on postId parameter and sort it.
+    - now we have the api route we want to show it inside comment sections
+    - CommentSection.jsx we want to req all the comment based on that postId, and set them in new State, if the res is okay, based on the response and comment length we want to load our ui accordingly and then use another Component Comment.jsx to map and load each comment 
+    {
+        - comments.map(...): loops through an array of comments.
+        - <Comment ... />: renders a Comment component for each one.
+        - key={comment._id}: uniquely identifies each item for React.
+        - comment={comment}: passes the whole comment object as a prop.
+    }
+    - Comment component => a comment object is passed in the component and we get our userId from there, which we can use to get user info,
+    - create a route which get the user, without the need of verifying the token. and take userId dynamically
+    - getUser => find user by the Id in User Model recived in the params, and we destructure the object recived and remove the password and send the rest data,
+    - In Comment component we want to getUser by sending the req to our getUser api and send userId dynamically from the comment object recived , and save the data in the use state, also using the save data in user state update the profilepicture, time created 
+    - while submitting the comment we want out latest comment to be ahead of the previous comments  setComments([data, ...comments]);
+
+}
