@@ -358,3 +358,22 @@ complete update user profile page functionality
     - Backend sends success response (status 200  - Frontend receives response    
     - Frontend updates UI by filtering state
 }
+
+33. show recent posts{
+    - Runs when the component mounts (empty dependency array [])
+    - Makes an API request to /api/post/getposts?limit=3 to get 3 recent posts
+    - When the response arrives, stores the posts array in state with setRecentPosts(data.posts)
+    - Checks if recentPosts exists (to prevent errors if it's still loading)
+    - Maps through each post in the array
+    Creates a PostCard component for each post
+    Passes:
+    - A unique key prop (using MongoDB's _id)
+    The entire post object as a prop
+    - Receives a single post object as a prop Displays:
+    - Post image as a clickable link
+    - Post title
+    - Post category
+    - "Read article" button (also a link) that appears on hover
+    - Uses CSS transitions and hover effects for interaction
+    - Links to the individual post page using the post's slug (/post/${post.slug})
+}
