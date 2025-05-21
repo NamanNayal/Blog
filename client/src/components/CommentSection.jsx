@@ -13,6 +13,8 @@ export default function CommentSection({postId}) {
     const [commentError, setCommentError] = useState(null);
     const [comments, setComments] = useState([]);
     const navigate = useNavigate();
+    const [showModal, setShowModal] = useState(false);
+    const [commentToDelete, setCommentToDelete] = useState(null);
 
 
     useEffect(() => {
@@ -99,6 +101,27 @@ export default function CommentSection({postId}) {
         comments.map((c)=> c._id === comment._id ? {...c, content:editedContent}: c)
       );
     };
+
+    const handleDelete = async (commentId)=>{
+      setShowModal(false);
+      try{
+        if (!currentUser) {
+          navigate('/sign-in');
+          return;
+        }
+        const res = await fetch(`/api/comment/deleteComment/${commentId}`,{
+          method: 'DELETE',
+        });
+       
+        if(res.ok){
+          const data = await res.json();
+          setComments(comments.filter((comment)=> comment._id !== commentId));
+        }
+
+      }catch(error){
+        console.log(error.message);
+      }
+    }
   return (
     <div className='max-w-2xl mx-auto w-full p-3'>
       {currentUser ? (
@@ -152,10 +175,32 @@ export default function CommentSection({postId}) {
             </div>
           </div>
           {comments.map((comment) => (
-            <Comment key={comment._id} comment={comment} onLike={handleLike} onEdit={handleEdit} />
+            <Comment key={comment._id} comment={comment} onLike={handleLike} onEdit={handleEdit} onDelete={(commentId)=>{
+              setShowModal(true);
+              setCommentToDelete(commentId);
+            }} />
           ))}
         </>
       )}
+      
+      {showModal && (
+                      <div className="modal-overlay">
+                      <div className="modal-container">
+                        <h2 className="modal-header">Confirm Deletion</h2>
+                        <p>Are you sure you want to delete this Comment? This action cannot be undone.</p>
+        
+                        <div className="modal-actions">
+                          <button onClick={()=> setShowModal(false)} className="bg-btn-secondary px-4 py-2 rounded-md">
+                            Cancel
+                          </button>
+                          <button onClick={()=> handleDelete(commentToDelete)} className="bg-btn-primaryRed px-4 py-2 rounded-md">
+                            Confirm
+                          </button>
+        
+                        </div>
+                      </div>
+                    </div>
+        )}
     </div>
   );
 }

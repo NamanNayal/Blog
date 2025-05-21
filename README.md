@@ -342,13 +342,19 @@ complete update user profile page functionality
     - handleEdit=> we want to manage state while editing, and render the ui accordingly, another  state that tracks edited content, we take comment and edited comment in parameters and map the comments and setComments to the new edited comment based on the comment._id
 }
 
-
-
-
-
-
-
-
-
-
+32. delete functionality {
+    - create a api route for delete functionality
+    - deleteComment => check if comment exist, if user is owner or admin, findbyIdanddelete the comment,
+    - Starts as comment._id in the Comment component
+    - Passed as argument to onDelete(comment._id)
+    - Received as parameter commentId in parent component
+    - Stored in state as commentToDelete
+    - Used in API URL: /api/comment/deleteComment/${commentId}
+    - Available in backend as req.params.commentId
+    User token sent automatically with request (likely in headers)
+    - verifyToken middleware validates token
+    - User data attached to request as req.user
+    - Controller uses req.user.id to verify permission    
+    - Backend sends success response (status 200  - Frontend receives response    
+    - Frontend updates UI by filtering state
 }

@@ -3,7 +3,7 @@ import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-export default function Comment({ comment, onLike, onEdit }) {
+export default function Comment({ comment, onLike, onEdit, onDelete }) {
   const [user, setUser] = useState({});
   const {currentUser} = useSelector((state) => state.user);
   const [isEditing, setIsEditing] = useState(false);
@@ -112,13 +112,21 @@ export default function Comment({ comment, onLike, onEdit }) {
           {
             currentUser && 
               (currentUser._id === comment.userId || currentUser.isAdmin) && (
+                <>
                 <button
                   type='button'
                   onClick={handleEdit}
-                  className='text-gray-400 hover:text-[#5A5AFF] cursor-pointer'
+                  className='text-gray-600 hover:text-[#5A5AFF] cursor-pointer'
                 > 
                  <i className="fa-solid fa-pen" ></i> 
                 </button>
+                <button
+                  type='button'
+                  onClick={()=> onDelete(comment._id)}
+                  className='hover:text-[#C62828] text-gray-600 cursor-pointer'>
+                <i className="fa-solid fa-trash"></i>
+                </button>
+                </>
               )
 
           }
