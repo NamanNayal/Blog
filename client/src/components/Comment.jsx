@@ -1,10 +1,13 @@
+import { Textarea } from 'flowbite-react';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-export default function Comment({ comment, onLike }) {
+export default function Comment({ comment, onLike, onEdit }) {
   const [user, setUser] = useState({});
   const {currentUser} = useSelector((state) => state.user);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedContent, setEditedContent] = useState(comment.content);
   
   useEffect(() => {
     const getUser = async () => {
@@ -20,6 +23,34 @@ export default function Comment({ comment, onLike }) {
     };
     getUser();
   }, [comment]);
+
+  const handleEdit = async () =>{
+    setIsEditing(true);
+    setEditedContent(comment.content);
+  };
+
+  const handleSave = async () =>{
+    try{
+      const res = await fetch(`/api/comment/editComment/${comment._id}`,{
+        method: 'PUT',
+        headers:{
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          content: editedContent,
+        })
+      });
+      if(res.ok){
+        setIsEditing(false);
+        onEdit(comment, editedContent);
+      }
+
+    }catch(error){
+      console.log(error.message);
+    }
+
+  }
+
   return (
     <div className='flex p-4 border-b dark:border-gray-600 text-sm'>
       <div className='flex-shrink-0 mr-3'>
@@ -36,12 +67,35 @@ export default function Comment({ comment, onLike }) {
           </span>
           <span className='text-gray-500 text-xs'>{moment(comment.createdAt).fromNow()}</span>
         </div>
+        {isEditing ? (
+          <>
+          <Textarea
+            className='mb-2'
+            value={editedContent} 
+            onChange={(e)=>setEditedContent(e.target.value)} 
+          />
+          <div className='flex justify-end gap-2 text-xs'>
+            <button 
+              className='px-4 py-1 rounded bg-btn-primary'
+              onClick={handleSave}
+            >
+              save
+            </button>
+            <button
+              className='px-3 py-1 rounded bg-btn-primaryRed'
+              onClick={()=> setIsEditing(false)}>
+              cancel
+            </button>
+          </div>
+          </>
+        ):(
+        <>
         <p className='text-gray-500 pb-2'>{comment.content}</p>
         <div className='flex items-center pt-2 text-xs border-t dark:border-gray-700 max-w-fit gap-2'>
           <button
             type='button'
             onClick={() => onLike(comment._id)}
-            className={`text-gray-400 hover:text-blue-500 ${
+            className={`text-gray-400 hover:text-blue-500 cursor-pointer ${
               currentUser &&
               comment.likes.includes(currentUser._id) &&
               '!text-blue-500'
@@ -55,7 +109,22 @@ export default function Comment({ comment, onLike }) {
                 ' ' +
                 (comment.numberOfLikes === 1 ? 'like' : 'likes')}
           </p>
+          {
+            currentUser && 
+              (currentUser._id === comment.userId || currentUser.isAdmin) && (
+                <button
+                  type='button'
+                  onClick={handleEdit}
+                  className='text-gray-400 hover:text-[#5A5AFF] cursor-pointer'
+                > 
+                 <i className="fa-solid fa-pen" ></i> 
+                </button>
+              )
+
+          }
         </div>
+        </>
+        )}
       </div>
     </div>
   );

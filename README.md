@@ -334,7 +334,14 @@ complete update user profile page functionality
         - Checks if the user is logged in; if not, redirects to the sign-in page.
         - Sends a PUT request to like or unlike a comment by its ID.
         - On success, updates the local comments state with the new like data.
-        }
+}
+31. edit functionality {
+    - create api route for editcomment,
+    - editComment => search for the comment, if it exisit, if the person is the owner or not the admin, then findbyidandupdate based on comment id recived from the params, and the content to be changed, and send back the new comment
+    - UI comment => if currentuser is available and current user id meets the commentuserid or isadmin then we want to render edit button
+    - handleEdit=> we want to manage state while editing, and render the ui accordingly, another  state that tracks edited content, we take comment and edited comment in parameters and map the comments and setComments to the new edited comment based on the comment._id
+}
+
 
 
 
