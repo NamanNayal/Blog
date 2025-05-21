@@ -325,3 +325,23 @@ complete update user profile page functionality
     - while submitting the comment we want out latest comment to be ahead of the previous comments  setComments([data, ...comments]);
 
 }
+
+30. add like functionality {
+    - create api route for liking a post,(check if comment is present, check if user liked the comment,)
+    - likeComment => check if comment exist else return, check if userIndex exist in the likes array, if it does not increase the numberOfLikes by 1 and push the req.user.id to the likes array, and if does exist remove the req.user.id from the likes array and decrease the numberOfLikes by 1;
+    - handleLike =>{
+        - The function takes commentId (the unique ID of the comment to like/unlike) as an argument.
+        - Checks if the user is logged in; if not, redirects to the sign-in page.
+        - Sends a PUT request to like or unlike a comment by its ID.
+        - On success, updates the local comments state with the new like data.
+        }
+
+
+
+
+
+
+
+
+
+}
