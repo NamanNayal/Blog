@@ -83,6 +83,20 @@ export default function DashSidebar() {
                 </div>
               </Link>
             </li>
+
+            <li>
+              <Link to='/dashboard?tab=comments'>
+                <div
+                  className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition ${tab === 'comments' ? 'text-white bg-gray-200 dark:bg-gray-800' : 'hover:bg-gray-800 dark:hover:bg-gray-800 '}`}
+              
+                  >
+                  <i className="fa-solid fa-comments"></i>
+
+                  <span>Comments</span>
+
+                </div>
+              </Link>
+            </li>
             </>
             
           )}
