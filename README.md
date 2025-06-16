@@ -434,5 +434,20 @@ GET /api/user/${userId} - Fetch username by user ID
 DELETE /api/comment/deleteComment/${commentId} - Delete specific comment
 }
 
-
+35.{
+    fix dashUser Component
+    
+    1. User clicks delete button on comment
+    2. Modal opens with comment ID stored in state
+    3. User confirms deletion
+    4. Frontend sends DELETE request with comment ID
+    5. Backend validates token and extracts user data
+    6. Backend checks if comment exists
+    7. Backend verifies user permission (owner/admin)
+    8. Backend deletes comment from database
+    9. Backend sends success response
+    10. Frontend filters comment from local state
+    11. UI updates automatically (comment disappears)
+    12. Modal closes and state resets
+}
 
