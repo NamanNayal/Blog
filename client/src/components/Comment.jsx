@@ -60,7 +60,7 @@ export default function Comment({ comment, onLike, onEdit, onDelete }) {
           alt={user.username}
         />
       </div>
-      <div className='flex-1'>
+      <div className='flex-1 min-w-0'>
         <div className='flex items-center mb-1'>
           <span className='font-bold mr-1 text-xs truncate'>
             {user ? `@${user.username}` : 'anonymous user'}
@@ -90,7 +90,7 @@ export default function Comment({ comment, onLike, onEdit, onDelete }) {
           </>
         ):(
         <>
-        <p className='text-gray-500 pb-2'>{comment.content}</p>
+        <p className='text-gray-500 pb-2 break-words whitespace-pre-wrap overflow-wrap-anywhere'>{comment.content}</p>
         <div className='flex items-center pt-2 text-xs border-t dark:border-gray-700 max-w-fit gap-2'>
           <button
             type='button'
