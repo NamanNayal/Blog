@@ -57,6 +57,19 @@ export default function DashSidebar() {
 
           {currentUser && currentUser.isAdmin && (
             <>
+                        <li>
+              <Link to='/dashboard?tab=dash'>
+                <div
+                  className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition ${tab === 'dash' ? 'text-white bg-gray-200 dark:bg-gray-800' : 'hover:bg-gray-800 dark:hover:bg-gray-800 '}`}
+              
+                  >
+                  <i className="fa-solid fa-chart-pie"></i>
+
+                  <span>Dashboard</span>
+
+                </div>
+              </Link>
+            </li>
             <li>
               <Link to='/dashboard?tab=posts'>
                 <div
@@ -97,6 +110,7 @@ export default function DashSidebar() {
                 </div>
               </Link>
             </li>
+
             </>
             
           )}
