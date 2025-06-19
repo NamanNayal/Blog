@@ -480,3 +480,20 @@ DELETE /api/comment/deleteComment/${commentId} - Delete specific comment
    - Provides smooth hover effects and transition animations for better UX.
 }
 
+38. search {
+    * Manages UI state using `useState` hooks for filters (`sidebarData`), fetched posts, loading status, "show more" pagination control, and mobile filter panel toggle.
+    * On every URL query change (`location.search`), `useEffect` runs to parse query parameters (`searchTerm`, `sort`, `category`) and sets them into `sidebarData`.
+    * Constructs backend API queries using `URLSearchParams`—translates frontend values to backend-compatible keys (`sort` → `order`, `start` for pagination).
+    * Fetches filtered posts from `/api/post/getposts` using `fetch`, and conditionally enables "Load More" if response length equals the backend limit (9).
+    * Prevents errors using try-catch blocks; displays fallback UI if no posts are found or an error occurs.
+    * Uses `navigate()` to push updated query strings to the URL based on user form interactions—ensures URL reflects UI state.
+    * Filters include real-time search, sort order (`asc` / `desc`), and category filtering (`reactjs`, `nextjs`, etc.), managed through `Select` and `TextInput` components.
+    * Handles pagination on "Load More" by passing `start=<current post count>` to backend and appending the new posts to existing list using array spread.
+    * Mobile view provides a toggleable filter panel; desktop layout shows a persistent sidebar using responsive CSS classes (`lg:hidden`, `lg:block`).
+    * Main result section renders conditionally based on loading and fetched post length, with fallbacks for no results and loading state.
+    * Search bar in the navbar integrates with the route via `useLocation` and `useNavigate`; syncs its state with `searchTerm` from URL.
+    * Post grid layout adapts to screen size using Tailwind’s responsive grid (`grid-cols-1`, `sm:grid-cols-2`, `xl:grid-cols-3`) and includes spacing/gap management for clean alignment.
+    * Applies debounce-like behavior manually via query-driven `useEffect` instead of event-level throttling for simplified state syncing.
+    * Ensures semantic separation of concern—form for filters, dynamic query construction for fetch, and conditionally rendered content.
+
+}

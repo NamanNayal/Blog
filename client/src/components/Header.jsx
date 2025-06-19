@@ -1,9 +1,12 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link,useLocation, useNavigate } from "react-router-dom";
 import Logo from '../assets/svg/13.svg';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleTheme } from "../redux/theme/themeSlice";
 import { signOutSuccess } from "../redux/user/userSlice";
+import { Avatar, Button, Dropdown, TextInput } from 'flowbite-react';
+import { AiOutlineSearch } from 'react-icons/ai';
+
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
@@ -11,6 +14,17 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
   const theme = useSelector(state => state.theme);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState('');
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const searchTermFromUrl = urlParams.get('searchTerm');
+    if (searchTermFromUrl) {
+      setSearchTerm(searchTermFromUrl);
+    }
+  }, [location.search]);
 
   const handleSignOut = async() =>{
     try{
@@ -28,6 +42,13 @@ const Navbar = () => {
       console.log(error);
     }
   }
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const urlParams = new URLSearchParams(location.search);
+    urlParams.set('searchTerm', searchTerm);
+    const searchQuery = urlParams.toString();
+    navigate(`/search?${searchQuery}`);
+  };
 
   return (
     <nav className="w-full h-16 md:h-20 flex items-center justify-between">
@@ -109,6 +130,24 @@ const Navbar = () => {
   </div>
         {/* DESKTOP MENU */}
         <div className="hidden md:flex items-center gap-8 xl:gap-12 font-medium">
+          
+        <form onSubmit={handleSubmit} className="relative">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search..."
+              className="hidden lg:inline-block w-74 pl-4 pr-10 py-2 rounded-lg border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-500"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <button
+              type="submit"
+              className="relative right-10 top-1/2 transform -translate-y-1/2 p-1 rounded transition-colors duration-200 hover:opacity-75 cursor-pointer"
+            >
+              <i className="fas fa-search text-lg"></i>
+            </button>
+          </div>
+        </form>
         <Link to="/">Home</Link>
         <Link to="/about">About</Link>
         <Link to="/projects">Projects</Link>

@@ -73,6 +73,18 @@ color: #e6e6ff;
   background-color: #B71C1C; /* Darker red for better depth */
 }
 
+.bg-btn-secondaryRed {
+  transition: background-color 0.3s ease-in-out;
+  color: #B71C1C;
+  cursor: pointer;
+  border: 2px solid #B71C1C;
+  
+}
+.bg-btn-secondaryRed:hover {
+background-color: #B71C1C;
+color: white;
+}
+
 /* input-field */
 .input-field {
   @apply w-full px-4 py-2 border rounded-md shadow-sm
@@ -392,4 +404,56 @@ color: #e6e6ff;
 
 .dark .post-content a {
   color: red;
+}
+
+/* Add this to your global CSS file */
+
+/* Fix Flowbite TextInput in light mode */
+.dark input[type="text"],
+.dark input[type="email"],
+.dark input[type="password"],
+.dark input[type="search"],
+.dark textarea,
+.dark select {
+  background-color: rgb(55 65 81) !important; /* gray-700 */
+  color: white !important;
+  border-color: rgb(75 85 99) !important; /* gray-600 */
+}
+
+/* Fix Flowbite TextInput in light mode */
+input[type="text"],
+input[type="email"], 
+input[type="password"],
+input[type="search"],
+textarea,
+select {
+  background-color: white !important;
+  color: rgb(17 24 39) !important; /* gray-900 */
+  border-color: rgb(209 213 219) !important; /* gray-300 */
+}
+
+/* Focus states */
+.dark input:focus,
+.dark textarea:focus,
+.dark select:focus {
+  border-color: rgb(59 130 246) !important; /* blue-500 */
+  box-shadow: 0 0 0 1px rgb(59 130 246) !important;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: rgb(59 130 246) !important; /* blue-500 */
+  box-shadow: 0 0 0 1px rgb(59 130 246) !important;
+}
+
+/* Placeholder text */
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: rgb(156 163 175) !important; /* gray-400 */
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: rgb(107 114 128) !important; /* gray-500 */
 }
