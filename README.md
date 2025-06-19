@@ -434,7 +434,7 @@ GET /api/user/${userId} - Fetch username by user ID
 DELETE /api/comment/deleteComment/${commentId} - Delete specific comment
 }
 
-35.{
+35. {
     fix dashUser Component
     
     1. User clicks delete button on comment
@@ -449,5 +449,34 @@ DELETE /api/comment/deleteComment/${commentId} - Delete specific comment
     10. Frontend filters comment from local state
     11. UI updates automatically (comment disappears)
     12. Modal closes and state resets
+}
+
+36. dashboard overview{
+    - Manages state for users, posts, comments, and their respective totals and recent counts using useState.
+    - Uses useEffect to fetch the latest 5 users, posts, and comments only if the logged-in user is an admin.
+    - Fetches data from /api/user/getusers, /api/post/getposts, and /api/comment/getcomments.
+    - Uses Redux's useSelector to access the currentUser and the current theme.
+    - Displays 3 dashboard cards: Total Users, Total Comments, and Total Posts, each with an icon, value, and last month's change.
+    - Cards have consistent layout and style, adapting to the current theme.
+    - Renders 3 data tables for recent users, comments, and posts using a reusable TableCard component.
+    - Each TableCard shows data in a styled table with headers, rows, and scrollable overflow if needed.
+    - TableCard receives props like title, link, theme classes, and renders children as table content.
+    - Applies theme-based dynamic class names for border, text, and hover effects across the component.
+    - Provides navigation links (e.g., “See all”) to detailed views for users, comments, and posts.
+    - Clean, modular structure improves readability and reuse of layout and styles.
+}
+
+37. Home {
+   - The component is the main landing page of the blog site.
+   - Uses useState to manage posts, loading, and error states.
+   - Uses useEffect to fetch recent blog posts from the backend API on component mount.
+   - Displays a hero section with a welcome message, description, and navigation links.
+   - Provides a call-to-action section using the CallToAction component.
+   - Shows a loading spinner while posts are being fetched.
+   - Displays an error message and retry button if fetching posts fails.
+   - If posts are successfully fetched, displays them in a responsive grid layout.
+   - Includes a final button to navigate to the full list of posts.
+   - Utilizes Tailwind CSS for styling and responsive design.
+   - Provides smooth hover effects and transition animations for better UX.
 }
 
