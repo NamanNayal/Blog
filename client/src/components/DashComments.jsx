@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
-import { FaCheck, FaTimes, FaExternalLinkAlt } from 'react-icons/fa';
 import Loading from './Loading'; // Adjust path as needed
 import Alert from './Alert'; // Adjust path as needed
 
