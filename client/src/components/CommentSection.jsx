@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
-import {Textarea} from 'flowbite-react';
 import { useState } from 'react';
 import Alert from './Alert';
 import Comment from './Comment';
@@ -147,13 +146,15 @@ export default function CommentSection({postId}) {
             onSubmit={handleSubmit}
            
         >
-            <Textarea
-            placeholder='Add a comment...'
-            rows='3'
-            maxLength='200'
-            onChange={(e)=>setComment(e.target.value)}
-            value = {comment}
-            />
+        <textarea
+          placeholder="Add a comment..."
+          rows={3}
+          maxLength={200}
+          onChange={(e) => setComment(e.target.value)}
+          value={comment}
+          className="w-full p-3 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+        />
+
             <div className='flex justify-between items-center mt-5'>
                 <p className='text-xs text-gray-500'>
                     {200 - comment.length} characters remaining

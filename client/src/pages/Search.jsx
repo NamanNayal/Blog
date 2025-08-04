@@ -1,4 +1,3 @@
-import { Button, Select, TextInput } from 'flowbite-react';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import PostCard from '../components/PostCard';
@@ -163,12 +162,13 @@ export default function Search() {
               <label className='block text-sm font-semibold'>
                 Search Term
               </label>
-              <TextInput
+              <input
+                type="text"
                 placeholder='Enter keywords...'
                 id='searchTerm'
-                type='text'
                 value={sidebarData.searchTerm}
                 onChange={handleChange}
+                className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
               />
             </div>
 
@@ -178,50 +178,47 @@ export default function Search() {
                 <label className='block text-xs font-semibold opacity-75'>
                   Sort By
                 </label>
-                <Select 
+                <select 
                   onChange={handleChange} 
                   value={sidebarData.sort} 
                   id='sort'
-                  size='sm'
+                  className='w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
                 >
                   <option value='desc'>Latest First</option>
                   <option value='asc'>Oldest First</option>
-                </Select>
+                </select>
               </div>
 
               <div className='space-y-2'>
                 <label className='block text-xs font-semibold opacity-75'>
                   Category
                 </label>
-                <Select
+                <select
                   onChange={handleChange}
                   value={sidebarData.category}
                   id='category'
-                  size='sm'
+                  className='w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
                 >
                   <option value='uncategorized'>All Categories</option>
                   <option value='reactjs'>React.js</option>
                   <option value='nextjs'>Next.js</option>
                   <option value='javascript'>JavaScript</option>
-                </Select>
+                </select>
               </div>
             </div>
 
             {/* Mobile Action Buttons */}
             <div className='flex gap-2'>
-              <Button 
+              <button 
                 type='submit' 
-                gradientDuoTone='purpleToPink'
-                className='flex-1 items-center bg-btn-secondary'
-                size='sm'
+                className='flex-1 px-4 py-2 text-sm font-medium text-white bg-btn-primary rounded-lg hover:opacity-90 transition-opacity'
               >
                 Apply Filters
-              </Button>
+              </button>
               <button
                 type='button'
                 onClick={() => setShowMobileSearch(false)}
                 className='px-4 py-2 border rounded-lg hover:opacity-80 transition-opacity text-sm bg-btn-secondaryRed'
-                
               >
                 Close
               </button>
@@ -243,12 +240,13 @@ export default function Search() {
               <label className='block text-sm font-semibold'>
                 Search Term
               </label>
-              <TextInput
+              <input
+                type="text"
                 placeholder='Enter keywords...'
                 id='searchTerm'
-                type='text'
                 value={sidebarData.searchTerm}
                 onChange={handleChange}
+                className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
               />
             </div>
 
@@ -259,14 +257,15 @@ export default function Search() {
                 <label className='block text-sm font-semibold'>
                   Sort By
                 </label>
-                <Select 
+                <select 
                   onChange={handleChange} 
                   value={sidebarData.sort} 
                   id='sort'
+                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
                 >
                   <option value='desc'>Latest First</option>
                   <option value='asc'>Oldest First</option>
-                </Select>
+                </select>
               </div>
 
               {/* Category */}
@@ -274,27 +273,27 @@ export default function Search() {
                 <label className='block text-sm font-semibold'>
                   Category
                 </label>
-                <Select
+                <select
                   onChange={handleChange}
                   value={sidebarData.category}
                   id='category'
+                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
                 >
                   <option value='uncategorized'>All Categories</option>
                   <option value='reactjs'>React.js</option>
                   <option value='nextjs'>Next.js</option>
                   <option value='javascript'>JavaScript</option>
-                </Select>
+                </select>
               </div>
             </div>
 
             {/* Apply Button */}
-            <Button 
+            <button 
               type='submit' 
-              gradientDuoTone='purpleToPink'
-              className='w-full cursor-pointer bg-btn-secondary'
+              className='w-full px-4 py-2 font-medium  bg-btn-primary   rounded-lg hover:opacity-90 transition-opacity cursor-pointer'
             >
               Apply Filters 
-            </Button>
+            </button>
           </form>
         </div>
       </div>

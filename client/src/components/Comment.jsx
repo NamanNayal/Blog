@@ -1,4 +1,3 @@
-import { Textarea } from 'flowbite-react';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -69,11 +68,13 @@ export default function Comment({ comment, onLike, onEdit, onDelete }) {
         </div>
         {isEditing ? (
           <>
-          <Textarea
-            className='mb-2'
-            value={editedContent} 
-            onChange={(e)=>setEditedContent(e.target.value)} 
-          />
+        <textarea
+          className="w-full rounded-lg border border-gray-300 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 resize-none"
+          value={editedContent}
+          onChange={(e) => setEditedContent(e.target.value)}
+          placeholder="Edit your content here..."
+          rows={4}
+        />
           <div className='flex justify-end gap-2 text-xs'>
             <button 
               className='px-4 py-1 rounded bg-btn-primary'

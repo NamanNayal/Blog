@@ -4,8 +4,6 @@ import Logo from '../assets/svg/13.svg';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleTheme } from "../redux/theme/themeSlice";
 import { signOutSuccess } from "../redux/user/userSlice";
-import { Avatar, Button, Dropdown, TextInput } from 'flowbite-react';
-import { AiOutlineSearch } from 'react-icons/ai';
 
 
 const Navbar = () => {
