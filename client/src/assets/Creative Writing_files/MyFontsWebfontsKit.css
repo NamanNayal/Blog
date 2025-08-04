@@ -1,0 +1,96 @@
+/**
+ * @license
+ * MyFonts Webfont Build ID 3571899, 2018-05-02T08:56:23-0400
+ * 
+ * The fonts listed in this notice are subject to the End User License
+ * Agreement(s) entered into by the website owner. All other parties are 
+ * explicitly restricted from using the Licensed Webfonts(s).
+ * 
+ * You may obtain a valid license at the URLs below.
+ * 
+ * Webfont: FoundryMonoline-Bold by The Foundry
+ * URL: https://www.myfonts.com/fonts/thefoundry/foundry-monoline/bold/
+ * Copyright: Copyright © The digitally encoded machine readable outline data for producing the typefaces licensed to you is copyrighted ©, 2008 by The Foundry, London. All rights reserved.
+ * Licensed pageviews: 10,000
+ * 
+ * Webfont: FoundryMonoline-Regular by The Foundry
+ * URL: https://www.myfonts.com/fonts/thefoundry/foundry-monoline/regular/
+ * Copyright: Copyright © The digitally encoded machine readable outline data for producing the typefaces licensed to you is copyrighted ©, 2008 by The Foundry, London. All rights reserved.
+ * Licensed pageviews: 1,000,000
+ * 
+ * Webfont: FoundryMonoline-Medium by The Foundry
+ * URL: https://www.myfonts.com/fonts/thefoundry/foundry-monoline/medium/
+ * Copyright: Copyright © The digitally encoded machine readable outline data for producing the typefaces licensed to you is copyrighted ©, 2008 by The Foundry, London. All rights reserved.
+ * Licensed pageviews: 1,000,000
+ * 
+ * Webfont: FolioBT-Light by Bitstream
+ * URL: https://www.myfonts.com/fonts/bitstream/folio/light/
+ * Copyright: Copyright 1990-2003 Bitstream Inc. All rights reserved.
+ * Licensed pageviews: 1,000,000
+ * 
+ * 
+ * License: https://www.myfonts.com/viewlicense?type=web&buildid=3571899
+ * 
+ * © 2018 MyFonts Inc
+*/
+
+
+/* @import must be at top of file, otherwise CSS will not work */
+@import url("//hello.myfonts.net/count/3680bb");
+@import url("//hello.myfonts.net/count/36a626");
+
+
+/*  FoundryMonoline Bold (36a626) */
+@font-face {
+	font-family: 'FoundryMonoline';
+	font-weight: 700;
+	src: url('//www.hope.ac.uk/media/styleassets/css/webfonts/36A626_0_0.eot');
+	src: url('//www.hope.ac.uk/media/styleassets/css/webfonts/36A626_0_0.eot?#iefix') format('embedded-opentype'),
+	url('//www.hope.ac.uk/media/styleassets/css/webfonts/36A626_0_0.woff2') format('woff2'),
+	url('//www.hope.ac.uk/media/styleassets/css/webfonts/36A626_0_0.woff') format('woff'),
+	url('//www.hope.ac.uk/media/styleassets/css/webfonts/36A626_0_0.ttf') format('truetype');
+}
+
+/*  FoundryMonoline Regular (3680bb) */
+@font-face {
+	font-family: 'FoundryMonoline';
+	font-weight: normal;
+	src: url('//www.hope.ac.uk/media/styleassets/css/webfonts/3680BB_1_0.eot');
+	src: url('//www.hope.ac.uk/media/styleassets/css/webfonts/3680BB_1_0.eot?#iefix') format('embedded-opentype'),
+	url('//www.hope.ac.uk/media/styleassets/css/webfonts/3680BB_1_0.woff2') format('woff2'),
+	url('//www.hope.ac.uk/media/styleassets/css/webfonts/3680BB_1_0.woff') format('woff'),
+	url('//www.hope.ac.uk/media/styleassets/css/webfonts/3680BB_1_0.ttf') format('truetype');
+}
+ 
+/*  FoundryMonoline Medium (3680bb)  */
+@font-face {
+	font-family: 'FoundryMonoline';
+	font-weight: 500;
+	src: url('//www.hope.ac.uk/media/styleassets/css/webfonts/3680BB_2_0.eot');
+	src: url('//www.hope.ac.uk/media/styleassets/css/webfonts/3680BB_2_0.eot?#iefix') format('embedded-opentype'),
+	url('//www.hope.ac.uk/media/styleassets/css/webfonts/3680BB_2_0.woff2') format('woff2'),
+	url('//www.hope.ac.uk/media/styleassets/css/webfonts/3680BB_2_0.woff') format('woff'),
+	url('//www.hope.ac.uk/media/styleassets/css/webfonts/3680BB_2_0.ttf') format('truetype');
+}
+ 
+/*  Folio Light (3680bb)  */
+@font-face {
+	font-family: 'Folio Light';
+	src: url('//www.hope.ac.uk/media/styleassets/css/webfonts/3680BB_3_0.eot');
+	src: url('//www.hope.ac.uk/media/styleassets/css/webfonts/3680BB_3_0.eot?#iefix') format('embedded-opentype'),
+	url('//www.hope.ac.uk/media/styleassets/css/webfonts/3680BB_3_0.woff2') format('woff2'),
+	url('//www.hope.ac.uk/media/styleassets/css/webfonts/3680BB_3_0.woff') format('woff'),
+	url('//www.hope.ac.uk/media/styleassets/css/webfonts/3680BB_3_0.ttf') format('truetype');
+}
+ 
+
+
+
+
+
+
+
+
+
+
+

@@ -29,19 +29,18 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen ">
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 opacity-50"></div>
         <div className="relative flex flex-col gap-8 py-16 md:py-24 lg:py-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
           <div className="text-center space-y-6">
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
-              Welcome to my Blog
+              स्वागत है आपके अपने शब्दों की दुनिया में…
             </h1>
-            <p className="text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed opacity-80">
-              Discover insightful articles and comprehensive tutorials covering web development, 
-              software engineering, and modern programming languages. Join me on this journey 
-              of continuous learning and innovation.
+            <p className="text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed opacity-80 text-wrap">
+              यहाँ मिलेंगी हिंदी कविताएँ, लघु कहानियाँ और वो बातें जो दिल को छू जाएँ सीधी, सच्ची और हमारी-आपकी जैसी। <br />
+              चलिए, शब्दों के इस सफर में साथ चलें…
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
               <Link

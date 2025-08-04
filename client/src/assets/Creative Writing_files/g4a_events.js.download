@@ -1,0 +1,448 @@
+
+$(document).ready(function () {
+	
+	var placeofaction = localStorage.getItem("placeofaction") ? localStorage.getItem("placeofaction") : "na";
+	localStorage.removeItem("placeofaction");
+	
+	
+	// Page name
+	var pagenames = {
+		"index_test.html": { exact: "homepage", default: "homepage" },
+		"aboutus": {
+			"exact": "aboutus",
+			"default": "aboutus_categories",
+			"governance": { "default": "governance_subcategories" },
+			"finance": { "default": "finance_subcategories" },
+			"jobopportunities": { "default": "jobopportunities_subcategories" },
+		},
+		"alumni": {
+			"exact": "alumni",
+			"default": "alumni_subcategories",
+		},
+		"applicantdays": { "exact": "applicant", },
+		"applicants": { "exact": "applicant_categories", },
+		"applying": {
+			"exact": "sah_categories", 
+			"default": "ath_subcategories",
+		},
+		"caerdeon": { "default": "plas_categories", },
+		"careers": {
+			"exact": "careers",
+			"default": "c&e_subcategories",
+		},
+		"conferences": {
+			"exact": "events_categories",
+			"default": "conferences_subcategories",
+		},
+		"englishlanguagerequirements": { "default": "intl_subcategories", },
+		"events": {
+			"exact": "events",
+			"default": "events_categories",
+		},
+		"future": {
+			"exact": "sah_categories", 
+		},
+		"gateway":  {
+			"exact": "gateway",
+			"default": "gateway_categories",
+		},
+		"halls": {
+			"exact": "lah_categories",
+			"default": "accomodation_subcategories",
+		},
+		"hopeparksports": { "default": "hopepark_subcategories", },
+		"hopesr": {
+			"exact": "hopesr",
+			"default": "hopesr_categories",
+		},
+		"informationfornewstudents": {
+			"exact": "sah_categories", 
+			"default": "infonewstudents_subcategories",
+		},
+		"inductionplus": { "exact": "infonewstudents_subcategories", },
+		"international": {
+			"exact": "sah_categories", 
+			"default": "intl_subcategories",
+		},
+		"library": { "default": "library_subcategories", },
+		"lifeathope": {
+			"exact": "life_at_hope",
+			"default": "lah_categories",
+			"chaplaincy": { "exact": "lah_categories", "default": "chaplaincy_subcategories" },
+			"ourcampuses": { "default": "ourcampus_subcategories" },
+			"studentsupport": { "default": "studentssupport_categories" },
+		},
+		"maturestudents": {
+			"exact": "sah_categories", 
+			"default": "maturestudents_subcategories",
+		},
+		"news": {
+			"exact": "news",
+			"default": "news_categories",
+		},
+		"opendays": { 
+			"exact": "openday_landing", 
+			"default": "openday_landing",
+		},
+		"pld": { 
+			"exact": "sah_categories", 
+			"default": "pld_categories",
+		},
+		"research": {
+			"exact": "research",
+			"default": "research_categories",
+			"researchcentres": { "default": "researchcenter_subcategories" },
+		},
+		"ref":  { "default": "research_subcategories", },
+		"searchresults": { "default": "searchresults" },
+		"studyathope": {
+			"default": "sah_categories",
+			"exact": "study_at_hope",
+			"coursefinder": { "default": "coursefinder" },
+			"schoolsanddepartments": { "default": "s&d_subcategories" },
+			"careersinteaching": { "default": "sah_categories" },
+		},
+		"postgraduate": {
+			"exact": "sah_categories",
+			"default": "pg_subcategories",
+			"postgraduatecourses": { "exact": "pg_courselisting", "default": "pg_coursedetail" },
+		},
+		"postgraduateresearch": {
+			"exact": "sah_categories", 
+		},
+		"undergraduate": {
+			"exact": "sah_categories",
+			"default": "ug_subcategories",
+			"contactus": { "exact": "contactus" },
+			"degreewithfoundationyear": { "exact": "sah_categories" }, 
+			"undergraduatecourses": { 
+				"exact": "ug_courselisting", "default": "ug_coursedetail",
+				"index_test.html": { exact: "ug_courselisting", default: "ug_courselisting" },
+			},
+		},
+		"visitus" :{
+			"default": "visitus_categories",
+		},
+		
+		// schools & departments
+		"businessschool": { "default": "s&d_subcategories"  },
+		"creativeperformingarts": { "default": "s&d_subcategories" },
+		"education": { "default": "s&d_subcategories" },
+		"geography": { "default": "s&d_subcategories" },
+		"healthandsportsciences": { "default": "s&d_subcategories" },
+		"humanities": { "default": "s&d_subcategories" },
+		"law": { "default": "s&d_subcategories" },
+		"mathematicsandcomputerscience": { "default": "s&d_subcategories" },
+		"psychology": { "default": "s&d_subcategories" },
+		"socialsciences": { "default": "s&d_subcategories" },
+		"childlab": { "default": "s&d_subcategories" },
+		"physiosportrehabclinic": { "default": "s&d_subcategories" },
+	};
+	
+	
+	var page_name = "no_page_name"
+	var url_segments = document.location.pathname.split("/").filter(function (x) { return x != ""; });
+	
+	if (url_segments.length > 0)
+	{
+		var last_url_seg = pagenames;
+		
+		for (i = 0; i < url_segments.length; i++)
+		{
+			if (last_url_seg.hasOwnProperty(url_segments[i]))
+			{
+				last_url_seg = last_url_seg[url_segments[i]];
+				page_name = last_url_seg.exact ? last_url_seg.exact : last_url_seg.default;
+			}
+			else if (last_url_seg.hasOwnProperty("exact"))
+			{
+				page_name = last_url_seg.exact;
+			}
+			/*
+			else if (last_url_seg.hasOwnProperty("default"))
+			{
+				page_name = last_url_seg.default;
+			}
+			*/
+			else
+			{
+				break;
+			}
+		}
+	}
+	else
+	{
+		page_name = "homepage";
+	}
+	
+	// pageview event with the pagename
+	dataLayer.push({
+		event: "pageview",
+		page_name: page_name,
+	});
+	
+	$("body").append("<input type='hidden' name='GA4PageName' id='GA4PageName' value='" + page_name + "'>");	
+	
+	console.log("page_name: " + page_name);
+	console.log("placeofaction: " + placeofaction);
+	
+	function sanitise_course_name(str)
+	{
+		return str.toLowerCase()
+				.replace(/([^a-z0-9\&\+])/g, "")
+				.replace("withayearinindustry", "yearindustry")
+				.replace("computerengineering", "compengineering")
+				.replace("creativeindustriesbusinessmanagement", "cibm");
+	}
+
+	// Top dropdown menu link click events
+	let dropdown_names = ["studyathope", "lifeathope", "research", "news", "events", "aboutus"];
+
+	dropdown_names.forEach(function (dropdown_name, i) {
+		
+		$("#hopeDropdown" + i + " a").each(function (e) {
+			
+			// link text with no spaces/special characters
+			var link_text = $(this)
+								.text()
+								.toLowerCase()
+								.replace(/([^a-z0-9\&])/g, "");
+		
+			$(this).attr("data_label1", link_text);
+			$(this).attr("data_" + dropdown_name, dropdown_name + "_click");
+		});
+	});
+		
+	// Careers top link
+	$(".hopeDropdownMenuItem").last().attr("data_careers", "careers_click");
+	
+	// Undergraduate courses
+	$(".course_list_combined a").each(function (e) {
+				
+		var parent_id = $(this).parent().parent().prop("id");
+		
+		// name of parent course
+		var parent_name = sanitise_course_name(
+							$(".course_list_main[data-target='" + parent_id + "']").text()
+						);
+							
+		// name of clicked course
+		var course_name = sanitise_course_name($(this).text());
+		
+		$(this).attr("data_course", "course_clicked");
+		$(this).attr("data_label1", parent_name);
+		$(this).attr("data_label2", course_name);
+		
+	});
+	
+	$(".postgrad_course_link").each(function (e) {
+
+		// name of clicked course
+		var course_name = sanitise_course_name($(this).text());
+		
+		$(this).attr("data_course", "course_clicked");
+		$(this).attr("data_label1", course_name);
+		$(this).attr("data_label2", course_name);
+		
+	});
+	
+	// homepage/gateway page
+	$("[href='//www.hope.ac.uk/'],[href='//www.hope.ac.uk/gateway/']")
+		.attr("data_home", "home_click");
+	
+	// Pods
+	// Spotlight boxes
+	$(".spotlight-box,.owl-item").each(function () { 
+		var text = $(this).find(".spotlight-box-content,.newsCarouselText2017")
+							.text()
+							.toLowerCase()
+							.replace(/([^a-z0-9\&])/g, "");
+							
+		$(this).find("a, img, div")
+			.attr("data_pod", "pod_click")
+			.attr("data_podtype", "spotlight")
+			.attr("data_label1", text);
+	});
+	
+	$("#secondaryNavigation a").each(function () {
+		var text = $(this).text()
+						.toLowerCase()
+						.replace(/([^a-z0-9\&])/g, "");
+						
+		$(this)
+			.attr("data_pod", "pod_click")
+			.attr("data_podtype", "side_navigation")
+			.attr("data_label1", text);
+	});
+	
+	$(".page_sidebar_link").each(function () {
+		var text = $(this).text()
+						.toLowerCase()
+						.replace(/([^a-z0-9\&])/g, "");
+						
+		$(this)
+			.attr("data_pod", "pod_click")
+			.attr("data_podtype", "page_sidebar_box")
+			.attr("data_label1", text);
+	});
+	
+	// Left hand navigation
+	
+	// search bar tracking
+	$(".header-search").on("submit", function () {
+		if ($("#header_search").val().trim() != "")
+		{
+			dataLayer.push({
+				event: "ga4_events",
+				event_name: "global_search",
+				page_name: page_name,
+				param_1: $(this).find("select").val(),
+				param_2: $("#header_search").val(),
+				param_3: "na",
+			});
+		}
+	});
+	
+	// course finder course select tracking
+	$(".study-course-finder-widget select").on("change", function () {
+		dataLayer.push({
+			event: "ga4_events",
+			event_name: "course_finder",
+			page_name: page_name,
+			param_1: "course_selected",
+			param_2: sanitise_course_name($(".study-course-finder-widget option:selected").text()),
+			param_3: "na",
+		});
+	});
+	
+	// course finder search tracking
+	$(".study-course-finder-widget form").on("submit", function () {
+		dataLayer.push({
+			event: "ga4_events",
+			event_name: "course_finder",
+			page_name: page_name,
+			param_1: "search",
+			param_2: $(".study-course-finder-widget input").val(),
+			param_3: "na",
+		});
+	});
+	
+	
+	// open days booking form link click
+	$("[href$='/opendays/']").on("click", function () {
+		dataLayer.push({
+			event: "ga4_events",
+			event_name: "book_open_day_request",
+			page_name: page_name,
+			param_1: "na",
+			param_2: $(this).data("placeofaction"),
+			param_3: "na",
+		});
+		
+		localStorage.setItem("placeofaction", $(this).data("placeofaction"));
+	});
+
+	// open days booking form link click
+	$("[href$='/undergraduate/getaprospectus/signuptotheinternationalnewsletter/']").on("click", function () {
+		dataLayer.push({
+			event: "ga4_events",
+			event_name: "newsletter_signup",
+			page_name: page_name,
+			param_1: "na",
+			param_2: $(this).data("placeofaction"),
+			param_3: "na",
+		});
+		
+		localStorage.setItem("placeofaction", $(this).data("placeofaction"));
+	});
+
+	// prospective request form link click
+	$("[href$='/undergraduate/getaprospectus/orderaprospectus/']").on("click", function () {
+		dataLayer.push({
+			event: "ga4_events",
+			event_name: "prospectus_request",
+			page_name: page_name,
+			param_1: "na",
+			param_2: $(this).data("placeofaction"),
+			param_3: "na",
+		});
+		
+		localStorage.setItem("placeofaction", $(this).data("placeofaction"));
+	});
+	
+	// remove pod clicks from the above
+	var datalayer_clicks = $("[href$='/opendays/'], [href$='/undergraduate/getaprospectus/signuptotheinternationalnewsletter/'], [href$='/undergraduate/getaprospectus/orderaprospectus/']");
+	
+	datalayer_clicks
+		.each(function () {
+			if ($(this).attr("data_pod"))
+			{
+				$(this).data("placeofaction", $(this).attr("data_podtype"));
+			}
+			else
+			{
+				$(this).data("placeofaction", "link");
+			}
+		});
+		
+	datalayer_clicks
+		.removeAttr("data_pod")
+		.removeAttr("data_podtype")
+		.removeAttr("data_label1");
+		
+	datalayer_clicks
+		.find("a, img, div")
+			.removeAttr("data_pod")
+			.removeAttr("data_podtype")
+			.removeAttr("data_label1");
+		
+	if ($(".az-iframe").length > 0)
+	{
+		var az_form_name = $(".az-iframe").data("form");
+		
+		var form_submitted = false;
+
+		// iFrame parent listener, which scrolls the page on a javascript-based validation failure to submit the form
+		window.addEventListener("message", function(ev) {
+
+			// Verify origin, and Message contents...
+			if ((ev.origin === "https://test-lph.azorus.com" || ev.origin === "https://your.hope.ac.uk" || ev.origin === "https://engage.hope.ac.uk") && (typeof ev.data === "string"))
+			{
+				if (form_submitted == false && ev.data.indexOf("form_submitted") !== -1)
+				{
+					var event_name = null
+					
+					// determine the event name from the form name
+					if (az_form_name == "Opendays")
+					{
+						event_name = "book_open_day_submit";
+					}
+					else if (az_form_name == "InternationalNewsletter")
+					{
+						event_name = "newsletter_signup_success";
+					}
+					else if (az_form_name == "Prospectus")
+					{
+						event_name = "prospectus_submit";
+					}
+					
+					// if it's an event we care about, send the datalayer event
+					if (event_name != null)
+					{
+						console.log("azorus datalayer event : " + event_name);
+						
+						dataLayer.push({
+							event: "ga4_events",
+							event_name: event_name,
+							page_name: page_name,
+							param_1: "na",
+							param_2: placeofaction,
+							param_3: "na",
+						});
+					}
+				}
+			}
+		});
+	}
+});
+

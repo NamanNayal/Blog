@@ -39,6 +39,7 @@ export const create = async(req, res, next)=>{
 
 export const getposts = async(req, res, next)=>{
     try{
+        console.log('Incoming Query:', req.query); 
         const startIndex = parseInt(req.query.start) || 0;
         const limit = parseInt(req.query.limit)|| 9;
         const sortDirection = req.query.order === 'asc' ? 1: -1;
@@ -56,6 +57,7 @@ export const getposts = async(req, res, next)=>{
             }),
 
         });
+           console.log('Filters being used:', filters); 
 
         const posts = await Post.find(filters)
         .sort({updatedAt: sortDirection})
@@ -83,6 +85,7 @@ export const getposts = async(req, res, next)=>{
 
         
     }catch(error){
+         console.error('❌ ERROR in getposts:', error);
         next(error);
     }
 }

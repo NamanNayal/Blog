@@ -87,7 +87,7 @@ export default function CreatePost() {
 
   return (
     <div className='p-3 max-w-xl sm:mx-auto min-h-screen'>
-      <h1 className='text-center text-3xl my-7 font-semibold w-full sm:w-[500px] md:w-[500px] lg:w-[500px] mx-auto mt-20'>Create a post</h1>
+      <h1 className='text-center text-3xl my-7 font-semibold w-full sm:w-[500px] md:w-[500px] lg:w-[500px] mx-auto mt-20 text-heading-1'>Create a post</h1>
 
                   
         {/* Error messages */}
@@ -96,11 +96,11 @@ export default function CreatePost() {
       <form className='flex flex-col gap-4' onSubmit={handleSubmit} >
         {/* Title And Select */}
       <div className="grid gap-2 mb-2">
-            <label htmlFor="title">Title</label>
+            <label htmlFor="title" className="text-body font-medium">Title</label>
             <input 
                 type="text" 
                 id="title" 
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                className="input-field" 
                 placeholder="Title" 
                 required 
                 onChange={(e)=>{
@@ -108,27 +108,27 @@ export default function CreatePost() {
                 }}
             />
         
-            <label htmlFor="category">Select a category</label>
+            <label htmlFor="category" className="text-body font-medium">Select a category</label>
             <select 
                 id="category" 
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-
+                className="input-field"
                 onChange={(e) =>{
                     setFormData({...formData, category:e.target.value})
                 }}
             >
-              <option value="others">others</option>
-              <option value="React">React</option>
-              <option value="Next">Next</option>
-              <option value="JavaScript">JavaScript</option>
-              <option value="Angular">Angular</option>
+            <option value="others">अन्य</option>
+            <option value="kavita">कविताएँ</option>
+            <option value="laghu-katha">लघु कथाएँ</option>
+            <option value="vichar">विचार और अनुभव</option>
+            <option value="shrunkhala">श्रृंखला विशेष</option>
             </select>
+
         </div>
 
 
         {/* Image Upload */}
         <div className="flex items-center justify-center w-full">
-            <label htmlFor="dropzone-file" className="flex flex-col items-center justify-center w-full h-48 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 overflow-hidden relative ">
+            <label htmlFor="dropzone-file" className="image-upload-zone">
                 {filePreview ? (
                     /* Show image preview if available */
                     <div className="w-full h-full flex flex-col items-center justify-center">
@@ -142,7 +142,7 @@ export default function CreatePost() {
                             {!formData.image && (
                                 <button 
                                     type="button"
-                                    className="ml-2 text-blue-300 hover:text-blue-100"
+                                    className="ml-2 text-blue-300 hover:text-blue-100 transition-colors duration-200"
                                     onClick={(e) => {
                                         e.preventDefault();
                                         handleUploadImage();
@@ -167,12 +167,12 @@ export default function CreatePost() {
                     </div>
                 ) : (
                     /* Default upload interface */
-                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                        <svg className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                    <div className="upload-default-content">
+                        <svg className="upload-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
                             <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
                         </svg>
-                        <p className="mb-2 text-sm text-gray-500 dark:text-gray-400"><span className="font-semibold">Click to upload</span> or drag and drop</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
+                        <p className="upload-primary-text"><span className="font-semibold">Click to upload</span> or drag and drop</p>
+                        <p className="upload-secondary-text">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
                     </div>
                 )}
                 {imageUploading && (
@@ -211,36 +211,44 @@ export default function CreatePost() {
         </div>
 
         {/* Text Editor */}
-        <div className="w-full mb-4 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
-            <div className="flex items-center justify-between px-3 py-2 border-b border-gray-200 dark:border-gray-600 border-gray-200">
-                <div className="flex flex-wrap items-center divide-gray-200 sm:divide-x sm:rtl:divide-x-reverse dark:divide-gray-600">
-                    <div className="flex items-center space-x-1 rtl:space-x-reverse sm:pe-4">
-                    
-                    
-                    <ReactQuill
+        <div className="quill-editor-container">
+            <label className="text-body font-medium mb-2 block">Content</label>
+            <div className="quill-editor">
+                <ReactQuill
                     theme='snow'
                     placeholder='Write something...'
-                    className='h-72 mb-12 w-110  pl-8 pt-2 pb-1  text-black dark:text-white'
-                    required
+                    value={formData.content}
                     onChange={(value)=>{
                         setFormData({...formData, content: value});
                     }}
-                    />
-
-
-                    </div>
-                </div>
+                    modules={{
+                        toolbar: [
+                            [{ 'header': [1, 2, 3, false] }],
+                            ['bold', 'italic', 'underline', 'strike'],
+                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                            ['blockquote', 'code-block'],
+                            ['link'],
+                            ['clean']
+                        ]
+                    }}
+                    formats={[
+                        'header',
+                        'bold', 'italic', 'underline', 'strike',
+                        'list', 'bullet',
+                        'blockquote', 'code-block',
+                        'link'
+                    ]}
+                />
             </div>
         </div>
 
         {/* Submit Button */}
         <button 
             type='submit' 
-            className='bg-btn-primary rounded-md p-3 mb-12 hover:opacity-90 transition'
+            className='bg-btn-primary rounded-md p-3 mb-12 hover:opacity-90 transition font-medium'
             disabled={imageUploading}
         >
-            Publish Post
-    
+            {imageUploading ? 'Please wait...' : 'Publish Post'}
         </button>
         {publishError && <Alert type="danger" message={publishError} />}
       </form>

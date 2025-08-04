@@ -1,15 +1,35 @@
 import React from 'react';
-import { ClipLoader } from 'react-spinners';
 
-export default function Loading({ text = 'Loading...', size = 40, overlay = false }) {
+export default function Loading({ 
+  text = "Loading...", 
+  overlay = false, 
+  size = 40,
+  className = "" 
+}) {
+  const baseClasses = "flex flex-col items-center justify-center gap-4";
+  const overlayClasses = overlay 
+    ? "fixed inset-0  bg-opacity-50 z-50" 
+    : "py-8";
+  
   return (
-    <div
-      className={`flex flex-col items-center justify-center transition-all duration-300 ease-in-out ${
-        overlay ? 'fixed inset-0 bg-[#222831]/60 z-50 backdrop-blur-sm' : 'w-full h-full'
-      }`}
-    >
-      <ClipLoader size={size} color="#00ADB5" />
-      <p className="mt-2 text-[#EEEEEE] text-sm animate-pulse">{text}</p>
+    <div className={`${baseClasses} ${overlayClasses} ${className}`}>
+      {/* Spinning loader */}
+      <div className="relative">
+        <div 
+          className="animate-spin rounded-full border-4 border-gray-200 border-t-blue-600"
+          style={{ 
+            width: `${size}px`, 
+            height: `${size}px` 
+          }}
+        />
+      </div>
+      
+      {/* Loading text */}
+      <div className="text-center">
+        <p className="text-gray-600  font-medium">
+          {text}
+        </p>
+      </div>
     </div>
   );
 }

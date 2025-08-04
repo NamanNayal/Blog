@@ -146,11 +146,11 @@ export default function UpdatePost() {
                 }}
                 value={formData.category}
             >
-              <option value="others">others</option>
-              <option value="React">React</option>
-              <option value="Next">Next</option>
-              <option value="JavaScript">JavaScript</option>
-              <option value="Angular">Angular</option>
+            <option value="others">अन्य</option>
+            <option value="kavita">कविताएँ</option>
+            <option value="laghu-katha">लघु कथाएँ</option>
+            <option value="vichar">विचार और अनुभव</option>
+            <option value="shrunkhala">श्रृंखला विशेष</option>
             </select>
         </div>
 

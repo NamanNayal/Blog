@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
 import { FaCheck, FaTimes } from 'react-icons/fa';
+import Loading from './Loading'; // Adjust path as needed
+import Alert from './Alert'; // Adjust path as needed
 
 export default function DashUsers() {
   const { currentUser } = useSelector((state) => state.user);
@@ -11,7 +12,8 @@ export default function DashUsers() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [userIdToDelete, setUserIdToDelete] = useState('');
   const [loading, setLoading] = useState(false);
-  const [totalUsers, setTotalUsers] = useState(0); // Track total user count
+  const [totalUsers, setTotalUsers] = useState(0);
+  const [alert, setAlert] = useState(null);
   
   useEffect(() => {
     const fetchUsers = async () => {
@@ -23,15 +25,17 @@ export default function DashUsers() {
         
         if (res.ok) {
           setUsers(data.users || []);
-          setTotalUsers(data.totalUsers || 0); // Get total count from API
+          setTotalUsers(data.totalUsers || 0);
           
-          // Hide "Show More" if we have all users or less than page size
           if (!data.users || data.users.length < 9 || data.users.length >= (data.totalUsers || 0)) {
             setShowMoreUser(false);
           }
+        } else {
+          setAlert({ type: 'danger', message: data.message || 'Failed to fetch users' });
         }
       } catch (error) {
         console.log("Error fetching users:", error.message);
+        setAlert({ type: 'danger', message: 'Network error while fetching users' });
       } finally {
         setLoading(false);
       }
@@ -53,16 +57,19 @@ export default function DashUsers() {
         setUsers((prev) => [...prev, ...data.users]);
         setTotalUsers(data.totalUsers || 0);
         
-        // Hide "Show More" if we've loaded all users or got less than expected
         if (data.users.length < 9 || (users.length + data.users.length) >= (data.totalUsers || 0)) {
           setShowMoreUser(false);
         }
       } else {
         setShowMoreUser(false);
+        if (!res.ok) {
+          setAlert({ type: 'warning', message: 'No more users to load' });
+        }
       }
     } catch (error) {
       console.log("Error in handleShowMoreUsers:", error.message);
-      setShowMoreUser(false); // Hide button on error
+      setShowMoreUser(false);
+      setAlert({ type: 'danger', message: 'Error loading more users' });
     } finally {
       setLoading(false);
     }
@@ -77,14 +84,17 @@ export default function DashUsers() {
       
       if (res.ok) {
         setUsers((prev) => prev.filter((user) => user._id !== userIdToDelete));
-        setTotalUsers(prev => prev - 1); // Update total count
+        setTotalUsers(prev => prev - 1);
         setShowDeleteModal(false);
         setUserIdToDelete('');
+        setAlert({ type: 'success', message: 'User deleted successfully' });
       } else {
         console.log(data.message);
+        setAlert({ type: 'danger', message: data.message || 'Failed to delete user' });
       }
     } catch (error) {
       console.log("Error deleting user:", error.message);
+      setAlert({ type: 'danger', message: 'Network error while deleting user' });
     }
   };
 
@@ -108,25 +118,35 @@ export default function DashUsers() {
     return `${Math.floor(diffInDays / 365)} years ago`;
   };
 
+  // Show loading component when initially loading
   if (loading && users.length === 0) {
-    return (
-      <div className="w-full min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-        <div className="text-gray-500 dark:text-gray-400">Loading users...</div>
-      </div>
-    );
+    return <Loading text="Loading users..." overlay={true} />;
   }
 
   return (
-    <div className="w-full min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="w-full min-h-screen transition-all duration-300">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        {/* Alert Component */}
+        {alert && (
+          <div className="mb-4">
+            <Alert type={alert.type} message={alert.message} />
+            <button 
+              onClick={() => setAlert(null)}
+              className="mt-2 text-sm text-[#393e46] dark:text-[#E6E6FF] underline hover:no-underline"
+            >
+              Dismiss
+            </button>
+          </div>
+        )}
+
         {currentUser?.isAdmin && users.length > 0 ? (
           <>
             {/* Header with user count */}
             <div className="mb-6">
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+              <h1 className="text-2xl font-bold ] mb-2 font-montserrat">
                 User Management
               </h1>
-              <p className="text-gray-600 dark:text-gray-400">
+              <p >
                 Showing {users.length} of {totalUsers} users
               </p>
             </div>
@@ -135,20 +155,20 @@ export default function DashUsers() {
             <div className="block lg:hidden">
               <div className="space-y-4">
                 {users.map((user) => (
-                  <div key={user._id} className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-all duration-200">
+                  <div key={user._id} className=" rounded-lg shadow-sm border border-[#5A5AFF]/20 dark:border-[#3A3AFF]/30 hover:shadow-md hover:border-[#5A5AFF]/40 dark:hover:border-[#3A3AFF]/50 transition-all duration-200">
                     <div className="p-4 sm:p-6">
                       {/* Header with date, user ID, and delete button */}
                       <div className="flex justify-between items-start mb-4">
                         <div>
-                          <div className="text-sm text-gray-500 dark:text-gray-400">
+                          <div className="text-sm ">
                             {new Date(user.createdAt).toLocaleDateString()}
                           </div>
-                          <div className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                          <div className="text-xs mt-1">
                             {formatUserId(user._id)} • {getRelativeTime(user.createdAt)}
                           </div>
                         </div>
                         <button 
-                          className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 text-sm font-medium px-3 py-1 rounded-md hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200"
+                          className="bg-btn-primaryRed text-sm font-medium px-3 py-1 rounded-md transition-all duration-200"
                           onClick={() => {
                             setShowDeleteModal(true);
                             setUserIdToDelete(user._id);
@@ -160,7 +180,7 @@ export default function DashUsers() {
                       
                       {/* User Profile Section */}
                       <div className="flex items-center mb-4">
-                        <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 mr-4 flex-shrink-0">
+                        <div className="w-16 h-16 rounded-full overflow-hidden mr-4 flex-shrink-0">
                           {user.profilePicture ? (
                             <img
                               src={user.profilePicture}
@@ -168,16 +188,16 @@ export default function DashUsers() {
                               className="w-full h-full object-cover"
                             />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-500 text-xl font-bold">
+                            <div className="w-full h-full flex items-center justify-center  text-xl font-bold font-montserrat">
                               {user.username?.charAt(0)?.toUpperCase() || '?'}
                             </div>
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 truncate">
+                          <h3 className="text-lg font-semibold  truncate font-montserrat">
                             {user.username}
                           </h3>
-                          <p className="text-sm text-gray-600 dark:text-gray-400 truncate">
+                          <p className="text-sm  truncate">
                             {user.email}
                           </p>
                         </div>
@@ -186,15 +206,15 @@ export default function DashUsers() {
                       {/* Admin Status Badge */}
                       <div className="flex items-center justify-between">
                         <div className="flex items-center">
-                          <span className="text-sm text-gray-500 dark:text-gray-400 mr-2">Status:</span>
+                          <span className="text-sm  mr-2">Status:</span>
                           {user.isAdmin ? (
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium   dark:text-green-500">
                               <FaCheck className="mr-1" />
                               Admin
                             </span>
                           ) : (
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
-                              <FaTimes className="mr-1" />
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ">
+                             <FaTimes className="mr-1" />
                               User
                             </span>
                           )}
@@ -208,52 +228,52 @@ export default function DashUsers() {
             
             {/* Desktop view: Table layout */}
             <div className="hidden lg:block">
-              <div className="bg-white dark:bg-gray-800 shadow-sm rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+              <div className=" shadow-sm rounded-lg border border-[#5A5AFF]/20 dark:border-[#3A3AFF]/30 overflow-hidden">
                 <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                    <thead className="bg-gray-50 dark:bg-gray-700">
+                  <table className="min-w-full divide-y divide-[#5A5AFF]/20 dark:divide-[#3A3AFF]/30">
+                    <thead className="">
                       <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider font-montserrat">
                           Date Created
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider font-montserrat">
                           User ID
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider font-montserrat">
                           User
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider font-montserrat">
                           Email
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider font-montserrat">
                           Admin Status
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider font-montserrat">
                           Actions
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                    <tbody className=" divide-y divide-[#5A5AFF]/10 dark:divide-[#3A3AFF]/20">
                       {users.map((user) => (
-                        <tr key={user._id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200">
+                        <tr key={user._id} className="hover:bg-[#e6e6ff]/50 dark:hover:bg-[#222831]/50 transition-colors duration-200 cursor-pointer">
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div>
-                              <div className="text-sm text-gray-900 dark:text-gray-100">
+                              <div className="text-sm ">
                                 {new Date(user.createdAt).toLocaleDateString()}
                               </div>
-                              <div className="text-xs text-gray-500 dark:text-gray-400">
+                              <div className="text-xs">
                                 {getRelativeTime(user.createdAt)}
                               </div>
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <span className="text-xs font-mono text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
+                            <span className="text-xs font-mono  px-2 py-1 rounded border border-[#5A5AFF]/20">
                               {formatUserId(user._id)}
                             </span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">
-                              <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 mr-3 flex-shrink-0">
+                              <div className="w-10 h-10 rounded-full overflow-hidden  mr-3 flex-shrink-0">
                                 {user.profilePicture ? (
                                   <img
                                     src={user.profilePicture}
@@ -261,29 +281,29 @@ export default function DashUsers() {
                                     className="w-full h-full object-cover"
                                   />
                                 ) : (
-                                  <div className="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-500 text-sm font-bold">
+                                  <div className="w-full h-full flex items-center justify-center text-sm font-bold font-montserrat">
                                     {user.username?.charAt(0)?.toUpperCase() || '?'}
                                   </div>
                                 )}
                               </div>
-                              <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                              <div className="text-sm font-medium  font-montserrat">
                                 {user.username}
                               </div>
                             </div>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm ">
                             <div className="max-w-xs truncate">
                               {user.email}
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             {user.isAdmin ? (
-                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">
+                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium = text-green-800  dark:text-green-500">
                                 <FaCheck className="mr-1" />
                                 Admin
                               </span>
                             ) : (
-                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ">
                                 <FaTimes className="mr-1" />
                                 User
                               </span>
@@ -291,7 +311,7 @@ export default function DashUsers() {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm">
                             <button 
-                              className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 font-medium transition-colors duration-200 px-3 py-1 rounded-md hover:bg-red-50 dark:hover:bg-red-900/20"
+                              className="bg-btn-primaryRed font-medium transition-colors duration-200 px-3 py-1 rounded-md"
                               onClick={() => {
                                 setShowDeleteModal(true);
                                 setUserIdToDelete(user._id);
@@ -308,58 +328,61 @@ export default function DashUsers() {
               </div>
             </div>
             
-            {/* Show More button - responsive */}
+            {/* Show More button */}
             {showMoreUser && (
               <div className="flex justify-center mt-6 sm:mt-8">
                 <button 
                   onClick={handleShowMoreUsers}
                   disabled={loading}
-                  className="px-6 sm:px-8 py-2 sm:py-3 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md font-medium text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="bg-btn-secondary font-medium text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed px-6 sm:px-8 py-2 sm:py-3 rounded-lg shadow-sm hover:shadow-md transition-all duration-200"
                 >
-                  {loading ? 'Loading...' : `Show More (${users.length}/${totalUsers})`}
+                  {loading ? (
+                    <div className="flex items-center">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#5A5AFF] mr-2"></div>
+                      Loading...
+                    </div>
+                  ) : (
+                    `Show More (${users.length}/${totalUsers})`
+                  )}
                 </button>
               </div>
             )}
           </>
         ) : (
           <div className="text-center py-12">
-            <p className="text-gray-500 dark:text-gray-400 text-lg">
+            <p className="text-lg">
               {!currentUser?.isAdmin ? 'Access denied. Admin privileges required.' : 'No users found!'}
             </p>
           </div>
         )}
 
-        {/* Delete Modal - responsive */}
+        {/* Delete Modal using your custom modal styles */}
         {showDeleteModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full mx-4">
-              <div className="p-6">
-                <div className="flex items-center mb-4">
-                  <HiOutlineExclamationCircle className="text-red-500 text-2xl mr-3" />
-                  <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                    Confirm Deletion
-                  </h2>
-                </div>
-                <p className="text-gray-600 dark:text-gray-300 mb-6">
-                  Are you sure you want to delete this user? This action cannot be undone and will permanently remove all user data.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-3 sm:gap-0 sm:space-x-3">
-                  <button 
-                    onClick={() => {
-                      setShowDeleteModal(false);
-                      setUserIdToDelete('');
-                    }}
-                    className="flex-1 px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors duration-200 font-medium"
-                  >
-                    Cancel
-                  </button>
-                  <button 
-                    onClick={handleDeleteUser}
-                    className="flex-1 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors duration-200 font-medium"
-                  >
-                    Delete User
-                  </button>
-                </div>
+          <div className="modal-overlay ">
+            <div className="modal-container ">
+              <div className="modal-header flex items-center">
+                <HiOutlineExclamationCircle className="text-red-500 text-2xl mr-3" />
+                <h2>Confirm Deletion</h2>
+              </div>
+              <p className="mb-6">
+                Are you sure you want to delete this user? This action cannot be undone and will permanently remove all user data.
+              </p>
+              <div className="modal-actions">
+                <button 
+                  onClick={() => {
+                    setShowDeleteModal(false);
+                    setUserIdToDelete('');
+                  }}
+                  className="bg-btn-primary px-4 py-2 rounded-md font-medium"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={handleDeleteUser}
+                  className="bg-btn-primaryRed px-4 py-2 rounded-md font-medium"
+                >
+                  Delete User
+                </button>
               </div>
             </div>
           </div>

@@ -1,0 +1,309 @@
+const UB_EMBED_ENVIRONMENT_URL = "https://prospect-guidance-ui.unibuddy.co";
+/* ^^^^^^^^^^^^^^^^^^^
+ * This HAS TO BE THE FIRST LINE for the deployment to work which modifies
+ * it based on the environment we are deploying to.
+ * */
+
+const POST_MESSAGE_TARGET_ORIGIN = "*";
+const CTA_CONTAINER_ID = "unibuddy-assistant-cta-container";
+const CTA_IFRAME_ID = "unibuddy-assistant-cta-iframe";
+const CTA_ACTIONS_CONTAINER_ID = "unibuddy-assistant-cta-actions-container";
+const CTA_ACTIONS_IFRAME_ID = "unibuddy-assistant-cta-actions-iframe";
+const CHAT_CONTAINER_ID = "unibuddy-assistant-chat-container";
+const CHAT_IFRAME_ID = "unibuddy-assistant-chat-iframe";
+const SMALL_DEVICE_RESIZE_WIDTH = 468; // 420px is the mobile breakpoint in patron/chat-ui + 48px to account for shadow around chat container
+const SMALL_DEVICE_RESIZE_HEIGHT = 450;
+const MAX_Z_INDEX = 2147483647;
+
+const APPS = {
+    cta: "cta",
+    ctaActions: "ctaActions",
+    chat: "chat",
+};
+
+function postMessageToIframe(iframeId, message) {
+    const frame = document.getElementById(iframeId);
+    if (!frame) {
+        console.error(`Could not find iframe ${iframeId} to post message to`);
+        return;
+    }
+
+    try {
+        frame.contentWindow.postMessage(message, POST_MESSAGE_TARGET_ORIGIN);
+    } catch (error) {
+        console.error("Error posting message to iframe", error);
+    }
+}
+
+function buildSrcUrl({render}) {
+    let src = UB_EMBED_ENVIRONMENT_URL;
+
+    src = src + `?render=${render}`;
+
+    const universityId = window.unibuddySettings.universityId ?? null;
+    if (universityId) {
+        src = src + `&universityId=${universityId}`;
+    }
+
+    const universitySlug = window.unibuddySettings.universitySlug ?? null;
+    if (universitySlug) {
+        src = src + `&universitySlug=${universitySlug}`;
+    }
+
+    const parentUrl = window.location.href;
+    if (parentUrl) {
+        src = src + `&parentUrl=${parentUrl}`;
+    }
+
+    const analyticsEnabled = window.unibuddySettings.analyticsEnabled ?? "true";
+    if (analyticsEnabled) {
+        src = src + `&analyticsEnabled=${analyticsEnabled}`;
+    }
+    return src;
+}
+
+function createCTA() {
+    const cta = document.createElement("div");
+    cta.id = CTA_CONTAINER_ID;
+    cta.style.position = "fixed";
+    cta.style.bottom = "24px";
+    cta.style.right = "24px";
+    cta.style.minWidth = "48px";
+    cta.style.minHeight = "48px";
+    cta.style.width = "48px";
+    cta.style.height = "48px";
+    cta.style.zIndex = `${MAX_Z_INDEX - 1}`;
+
+    // Hover transition effect with delay
+    let hoverTimeout;
+    cta.addEventListener("mouseover", function () {
+        clearTimeout(hoverTimeout);
+        cta.style.width = "166px";
+    });
+    cta.addEventListener("mouseout", function () {
+        hoverTimeout = setTimeout(() => {
+            cta.style.width = "48px";
+        }, 300); // Delay should be same as /src/views/CTA/AppCTAButton.tsx#AnimationContainer delay
+    });
+
+    const src = buildSrcUrl({
+        render: APPS.cta,
+    });
+
+    const iframe = document.createElement("iframe");
+
+    iframe.setAttribute("src", src);
+    iframe.id = CTA_IFRAME_ID;
+    iframe.title = "Unibuddy Assistant CTA";
+    iframe.style.height = "48px";
+    iframe.style.width = "100%";
+    iframe.style.border = "none";
+
+    cta.appendChild(iframe);
+
+    return cta;
+}
+
+function createCTAActions() {
+    const ctaActions = document.createElement("div");
+    ctaActions.id = CTA_ACTIONS_CONTAINER_ID;
+    ctaActions.style.position = "fixed";
+    ctaActions.style.bottom = "72px";
+    ctaActions.style.right = "0px";
+    ctaActions.style.width = "360px";
+    ctaActions.style.height = "250px";
+    ctaActions.style.opacity = "0";
+    ctaActions.style.pointerEvents = "none";
+    ctaActions.style.transformOrigin = "bottom";
+    ctaActions.style.transform = "scale(0)";
+    ctaActions.style.zIndex = `${MAX_Z_INDEX - 1}`;
+
+    const src = buildSrcUrl({
+        render: APPS.ctaActions,
+    });
+
+    const iframe = document.createElement("iframe");
+
+    iframe.setAttribute("src", src);
+    iframe.id = CTA_ACTIONS_IFRAME_ID;
+    iframe.title = "Unibuddy Assistant CTA Actions";
+    iframe.style.height = "100%";
+    iframe.style.width = "100%";
+    iframe.style.border = "none";
+
+    ctaActions.appendChild(iframe);
+
+    return ctaActions;
+}
+
+function createChat() {
+    const chatContainer = document.createElement("div");
+    chatContainer.id = CHAT_CONTAINER_ID;
+    chatContainer.style.position = "fixed";
+    chatContainer.style.backgroundColor = "white";
+    chatContainer.style.opacity = "0";
+    chatContainer.style.pointerEvents = "none";
+    chatContainer.style.transformOrigin = "right bottom";
+    chatContainer.style.transform = "scale(0)";
+    chatContainer.style.transition =
+        "width 200ms ease 0s, height 200ms ease 0s, max-height 200ms ease 0s, transform 300ms cubic-bezier(0, 1.2, 1, 1) 0s, opacity 83ms ease-out 0s";
+
+    // Accessibility requirements
+    chatContainer.setAttribute("role", "dialog");
+    chatContainer.setAttribute("aria-labelledby", "assistant-heading");
+
+    const src = buildSrcUrl({
+        render: APPS.chat,
+    });
+
+    const iframe = document.createElement("iframe");
+
+    iframe.setAttribute("src", src);
+    iframe.id = CHAT_IFRAME_ID;
+    iframe.title = "Unibuddy Assistant Chat";
+    iframe.style.width = "100%";
+    iframe.style.height = "100%";
+    iframe.style.border = "none";
+
+    // These will be toggled when visibility changes
+    chatContainer.setAttribute("aria-hidden", true);
+    iframe.setAttribute("tabindex", "-1");
+
+    chatContainer.appendChild(iframe);
+
+    updateChatContainerStyles(false, chatContainer);
+
+    return chatContainer;
+}
+
+function updateContainerVisibility(visible, containerId) {
+    const container = document.getElementById(containerId);
+    container.style.opacity = visible ? "1" : "0";
+    container.style.pointerEvents = visible ? "all" : "none";
+    container.style.transform = visible ? "scale(1)" : "scale(0)";
+    container.setAttribute("aria-hidden", visible ? "false" : "true");
+    // We should map container and iframe ids so this is tidier
+    if (containerId === CHAT_CONTAINER_ID) {
+        const iframe = document.getElementById(CHAT_IFRAME_ID);
+        iframe.setAttribute("tabindex", visible ? "0" : "-1");
+    } else if (containerId === CTA_ACTIONS_CONTAINER_ID) {
+        const iframe = document.getElementById(CTA_ACTIONS_IFRAME_ID);
+        iframe.setAttribute("tabindex", visible ? "0" : "-1");
+    }
+}
+
+function updateChatContainerStyles(isSmallDevice, container) {
+    if (isSmallDevice) {
+        container.style.bottom = "0px";
+        container.style.right = "0px";
+        container.style.minWidth = "100%";
+        container.style.minHeight = "100%";
+        container.style.maxWidth = "100%";
+        container.style.width = "100%";
+        container.style.height = "100%";
+        container.style.boxShadow = "none";
+        container.style.borderRadius = "0px";
+        container.style.zIndex = `${MAX_Z_INDEX}`;
+    } else {
+        container.style.bottom = "96px";
+        container.style.right = "24px";
+        container.style.minWidth = "48px";
+        container.style.minHeight = "48px";
+        container.style.maxWidth = "calc(100vw - 48px)";
+        container.style.width = "500px";
+        container.style.height = "80vh";
+        container.style.boxShadow = "0px 15px 40px rgba(0, 0, 0, 0.2)";
+        container.style.borderRadius = "12px";
+        container.style.zIndex = `${MAX_Z_INDEX - 1}`;
+    }
+}
+
+let matchedMedia;
+
+function matchMediaOnChangeCallback(event) {
+    const matches = event.matches;
+
+    // Update iframe styles
+    updateChatContainerStyles(matches, document.getElementById(CHAT_CONTAINER_ID));
+
+    // We are setting isSmallDevice to true to manage full screen chat on both Height(Landscape) & Width(Mobile) limits
+    // Pass message to application to update app styles
+    postMessageToIframe(CHAT_IFRAME_ID, `isSmallDevice=${matches}`);
+    postMessageToIframe(CTA_ACTIONS_IFRAME_ID, `isSmallDevice=${matches}`);
+}
+
+function checkWindowSize() {
+    matchedMedia?.removeEventListener("change", matchMediaOnChangeCallback);
+
+    matchedMedia = matchMedia(
+        `(max-width: ${SMALL_DEVICE_RESIZE_WIDTH}px), (max-height: ${SMALL_DEVICE_RESIZE_HEIGHT}px)`,
+    );
+    matchedMedia.addEventListener("change", matchMediaOnChangeCallback);
+
+    matchMediaOnChangeCallback(matchedMedia);
+}
+
+function domLoaded() {
+    if (!window.unibuddySettings) {
+        return;
+    }
+
+    const cta = createCTA();
+    const ctaActions = createCTAActions();
+    const chat = createChat();
+
+    document.body.appendChild(cta);
+    document.body.appendChild(ctaActions);
+    document.body.appendChild(chat);
+
+    checkWindowSize();
+}
+
+domLoaded();
+
+function handleMessage(e) {
+    if (e.origin === UB_EMBED_ENVIRONMENT_URL) {
+        switch (e.data) {
+            case "chatVisible=true":
+                // Updates CTA actions so they no longer show
+                postMessageToIframe(CTA_ACTIONS_IFRAME_ID, "showCTAActions=false");
+
+                // Update the CTA so it changes styles and content
+                postMessageToIframe(CTA_IFRAME_ID, e.data);
+
+                // Make the chat visible
+                updateContainerVisibility(true, CHAT_CONTAINER_ID);
+
+                // Update the Chat so it can initialise a conversation
+                postMessageToIframe(CHAT_IFRAME_ID, e.data);
+
+                break;
+            case "chatVisible=false":
+                updateContainerVisibility(false, CHAT_CONTAINER_ID);
+                postMessageToIframe(CTA_IFRAME_ID, e.data);
+                postMessageToIframe(CHAT_IFRAME_ID, e.data);
+                break;
+            case "updateWidth":
+                checkWindowSize();
+                break;
+            case "showCTAActions=true":
+                updateContainerVisibility(true, CTA_ACTIONS_CONTAINER_ID);
+                postMessageToIframe(CTA_ACTIONS_IFRAME_ID, "showCTAActionsAria=true");
+                break;
+            case "showCTAActions=false":
+                updateContainerVisibility(false, CTA_ACTIONS_CONTAINER_ID);
+                break;
+            case "assistantEnabled=true":
+                updateContainerVisibility(true, CTA_CONTAINER_ID);
+                break;
+            case "assistantEnabled=false":
+                updateContainerVisibility(false, CTA_CONTAINER_ID);
+                updateContainerVisibility(false, CTA_ACTIONS_CONTAINER_ID);
+                updateContainerVisibility(false, CHAT_CONTAINER_ID);
+                break;
+            default:
+                break;
+        }
+    }
+}
+addEventListener("message", handleMessage, true);

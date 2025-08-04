@@ -3,29 +3,50 @@ import bcryptjs from "bcryptjs";
 import { errorHandler } from "../utils/error.js";
 import jwt from "jsonwebtoken";
 
-export const signup = async(req, res, next)=>{
-    try{
+
+export const signup = async(req, res, next) => {
+    try {
         const {username, email, password} = req.body;
-        if(!username || !password || !email || username === ''|| email ==='' || password === ''){
+        if(!username || !password || !email || username === '' || email === '' || password === '') {
             return next(errorHandler(400, 'All fields are required'));
         }
-        const hashedPassword = bcryptjs.hashSync(password,10);
-
-        const newUser = User({
+        
+        const hashedPassword = bcryptjs.hashSync(password, 10);
+        
+        const newUser = new User({
             username,
             email,
-            password:hashedPassword,
+            password: hashedPassword,
         });
-    
-        await newUser.save();
-        res.json("Signup Successful");
-
-    }catch(e){
-        next(e);
-        console.log("Google Auth Error:", e);
         
+        await newUser.save();
+        
+        // Generate JWT token for automatic sign-in
+        const token = jwt.sign(
+            {
+                id: newUser._id, 
+                isAdmin: newUser.isAdmin,
+            }, 
+            process.env.JWT_SECRET,
+            {expiresIn: '1week'}
+        );
+        
+        // Remove password from response
+        const {password: pass, ...rest} = newUser._doc;
+        
+        res.status(201).cookie('access_token', token, {
+            httpOnly: true,
+        }).json({
+            message: "Signup Successful", 
+            user: rest
+        });
+        
+    } catch(e) {
+        next(e);
+        console.log("Signup Error:", e);
     }
 };
+
 
 export const signin = async(req,res, next) => {
     try{

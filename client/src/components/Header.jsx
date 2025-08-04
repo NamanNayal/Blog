@@ -26,6 +26,20 @@ const Navbar = () => {
     }
   }, [location.search]);
 
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    
+    // Cleanup function to reset overflow when component unmounts
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [open]);
+
   const handleSignOut = async() =>{
     try{
       const res = await fetch('/api/user/signout',{
@@ -42,6 +56,7 @@ const Navbar = () => {
       console.log(error);
     }
   }
+  
   const handleSubmit = (e) => {
     e.preventDefault();
     const urlParams = new URLSearchParams(location.search);
@@ -50,8 +65,13 @@ const Navbar = () => {
     navigate(`/search?${searchQuery}`);
   };
 
+  const handleMobileLinkClick = () => {
+    setOpen(false);
+  };
+
   return (
-    <nav className="w-full h-16 md:h-20 flex items-center justify-between">
+    <nav className="w-full h-16 md:h-20 flex items-center justify-between shadow-md relative z-40">
+
       {/* LOGO */}
       <Link to="/" className="flex items-center gap-4 text-2xl font-bold ml-8">
         <img src={Logo} alt="Lama Logo" className="max-w-12 max-h-12" />
@@ -62,7 +82,7 @@ const Navbar = () => {
 <div className="md:hidden">
   {/* MOBILE BUTTON */}
   <div
-    className="cursor-pointer text-4xl"
+    className="cursor-pointer text-4xl mr-8 z-50 relative"
     onClick={() => setOpen((prev) => !prev)}
   >
     <div className="flex flex-col gap-[5.4px]">
@@ -84,14 +104,15 @@ const Navbar = () => {
     </div>
   </div>
 
-  {/* MOBILE LINK LIST */}
+  {/* MOBILE LINK LIST - FIXED OVERLAY */}
   <div
-  className={`w-full h-screen flex flex-col items-center justify-center gap-8 font-medium text-lg absolute top-16 transition-all ease-in-out  
-    ${open ? "right-0 dark:bg-[#121826]/80 dark:text-[#E6E6FF] backdrop-blur-lg" : "-right-[100%]"} 
-   `}
->
-
-        {/* Theme Toggle for Mobile */}
+    className={`fixed inset-0 w-full h-full flex flex-col items-center justify-center gap-8 font-medium text-lg transition-all duration-300 ease-in-out z-40
+      ${open 
+        ? `opacity-100 visible backdrop-blur-md ${theme.theme === "light" ? "bg-[#e6e6ff]/95 " : "bg-[#121826]/95 "}` 
+        : "opacity-0 invisible"
+      }`}
+  >
+    {/* Theme Toggle for Mobile */}
     <button
       className={`w-12 h-10 flex items-center justify-center rounded-full transition-all duration-300 ease-in-out focus:outline-none cursor-pointer
         ${theme.theme === "light" ? "bg-gray-200 text-gray-800 hover:bg-gray-300" : "bg-[#222831] text-[#E6E6FF] hover:bg-[#3A3A47]"}`}
@@ -103,31 +124,42 @@ const Navbar = () => {
         <i className="fa-solid fa-moon text-blue-400 text-xl"></i>
       )}
     </button>
-    <Link to="/" onClick={() => setOpen(false)}>Home</Link>
-    <Link to="/posts?sort=trending" onClick={() => setOpen(false)}>Trending</Link>
-    <Link to="/posts?sort=popular" onClick={() => setOpen(false)}>Most Popular</Link>
-    <Link to="/about" onClick={() => setOpen(false)}>About</Link>
-
-
+    
+    <Link to="/" onClick={handleMobileLinkClick} className="text-2xl hover:text-blue-500 transition-colors transform hover:scale-105">
+      Home
+    </Link>
+    <Link to="/about" onClick={handleMobileLinkClick} className="text-2xl hover:text-blue-500 transition-colors transform hover:scale-105">
+      About
+    </Link>
+      <Link to="/projects" onClick={handleMobileLinkClick} className="text-2xl hover:text-blue-500 transition-colors transform hover:scale-105">
+      Upcoming Work
+    </Link>
 
     {currentUser ? (
       <>
-        <Link to="/profile" onClick={() => setOpen(false)}>Profile</Link>
-        <Link to="/sign-out" onClick={() => setOpen(false)}>
-          <button onClick={handleSignOut} className="py-2 px-4 rounded-3xl bg-btn-primary cursor-pointer">
-            Sign out
-          </button>
+        <Link to="/dashboard?tab=profile" onClick={handleMobileLinkClick} className="text-2xl hover:text-blue-500 transition-colors transform hover:scale-105">
+          Profile
         </Link>
+        <button 
+          onClick={() => {
+            handleSignOut();
+            handleMobileLinkClick();
+          }} 
+          className="py-3 px-6 text-lg rounded-3xl bg-btn-primary cursor-pointer hover:opacity-90 transition-all transform hover:scale-105"
+        >
+          Sign out
+        </button>
       </>
     ) : (
-      <Link to="/sign-in" onClick={() => setOpen(false)}>
-        <button className="py-2 px-4 rounded-3xl bg-btn-primary cursor-pointer">
+      <Link to="/sign-in" onClick={handleMobileLinkClick}>
+        <button className="py-3 px-6 text-lg rounded-3xl bg-btn-primary cursor-pointer hover:opacity-90 transition-all transform hover:scale-105">
           Sign in
         </button>
       </Link>
     )}
   </div>
-  </div>
+</div>
+
         {/* DESKTOP MENU */}
         <div className="hidden md:flex items-center gap-8 xl:gap-12 font-medium">
           
@@ -163,37 +195,22 @@ const Navbar = () => {
 
         <div className="relative  mr-8">
         {currentUser ? (
-        <>
-          <button onClick={() => setIsOpen(!isOpen)} className="flex items-center space-x-2 cursor-pointer">
+          <Link to="/dashboard?tab=profile">
             <img
               src={currentUser.profilePicture}
               alt="User"
-              className="w-10 h-10 rounded-full border object-cover"
+              className="h-10 w-10 rounded-full object-cover object-center cursor-pointer border"
             />
-          </button>
-
-          {isOpen && (
-            <div className="dropdown-menu cursor-pointer">
-              <div className="dropdown-header">
-                <p>@{currentUser.username}</p>
-            
-              </div>
-              <Link to="/dashboard?tab=profile">
-                <p className="dropdown-item">Profile</p>
-              </Link>
-              <div className="dropdown-divider"></div>
-              <p onClick={handleSignOut} className="dropdown-item">Sign out</p>
-            </div>
-          )}
-        </>
-      ) : (
+          </Link>
+        ) : (
           <Link to="/sign-in">
             <button className="py-2 px-4 rounded-3xl bg-btn-primary cursor-pointer">
-              Sign In </button>
+              Sign In
+            </button>
           </Link>
-       )}
+        )}
+      </div>
 
-        </div>
           
       </div>
     </nav>

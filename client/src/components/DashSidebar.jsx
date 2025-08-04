@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 import { signOutSuccess } from "../redux/user/userSlice";
 
-
 export default function DashSidebar() {
     const location = useLocation();
     const [tab, setTab] = useState("");
@@ -36,96 +35,69 @@ export default function DashSidebar() {
     }
   
     return (
-      <div className="w-full md:w-56 p-4 rounded-lg shadow-md transition-all
-        ">
-  
-        <ul className="space-y-4">
+      <div className="sidebar-container">
+        <ul className="sidebar-menu">
           {/* Profile Link */}
           <li>
             <Link
               to="/dashboard?tab=profile"
-              className={`flex items-center gap-3 p-3 rounded-lg transition-all  ${
-                tab === "profile"
-                  ? "bg-btn-primary"
-                  : "hover:bg-gray-70"
+              className={`sidebar-item ${
+                tab === "profile" ? "sidebar-item-active" : ""
               }`}
             >
-              <i className="fa-solid fa-user text-lg"></i>
-              <span>Profile</span>
+              <i className="fa-solid fa-user sidebar-icon"></i>
+              <span className="sidebar-text">Profile</span>
             </Link>
           </li>
 
           {currentUser && currentUser.isAdmin && (
             <>
-                        <li>
-              <Link to='/dashboard?tab=dash'>
-                <div
-                  className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition ${tab === 'dash' ? 'text-white bg-gray-200 dark:bg-gray-800' : 'hover:bg-gray-800 dark:hover:bg-gray-800 '}`}
+              <li>
+                <Link to='/dashboard?tab=dash'>
+                  <div className={`sidebar-item ${tab === 'dash' ? 'sidebar-item-active' : ''}`}>
+                    <i className="fa-solid fa-chart-pie sidebar-icon"></i>
+                    <span className="sidebar-text">Dashboard</span>
+                  </div>
+                </Link>
+              </li>
               
-                  >
-                  <i className="fa-solid fa-chart-pie"></i>
-
-                  <span>Dashboard</span>
-
-                </div>
-              </Link>
-            </li>
-            <li>
-              <Link to='/dashboard?tab=posts'>
-                <div
-                  className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition ${tab === 'posts' ? 'text-white bg-gray-200 dark:bg-gray-800' : 'hover:bg-gray-800 dark:hover:bg-gray-800 '}`}
+              <li>
+                <Link to='/dashboard?tab=posts'>
+                  <div className={`sidebar-item ${tab === 'posts' ? 'sidebar-item-active' : ''}`}>
+                    <i className="fa-solid fa-file-lines sidebar-icon"></i>
+                    <span className="sidebar-text">Posts</span>
+                  </div>
+                </Link>
+              </li>
               
-                  >
-                  <i className="fa-solid fa-file-lines text-lg"></i>
+              <li>
+                <Link to='/dashboard?tab=users'>
+                  <div className={`sidebar-item ${tab === 'users' ? 'sidebar-item-active' : ''}`}>
+                    <i className="fa-solid fa-users sidebar-icon"></i>
+                    <span className="sidebar-text">Users</span>
+                  </div>
+                </Link>
+              </li>
 
-                  <span>Posts</span>
-
-                </div>
-              </Link>
-            </li>
-            <li>
-              <Link to='/dashboard?tab=users'>
-                <div
-                  className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition ${tab === 'posts' ? 'text-white bg-gray-200 dark:bg-gray-800' : 'hover:bg-gray-800 dark:hover:bg-gray-800 '}`}
-              
-                  >
-                  <i className="fa-solid fa-users text-lg"></i>
-
-                  <span>Users</span>
-
-                </div>
-              </Link>
-            </li>
-
-            <li>
-              <Link to='/dashboard?tab=comments'>
-                <div
-                  className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition ${tab === 'comments' ? 'text-white bg-gray-200 dark:bg-gray-800' : 'hover:bg-gray-800 dark:hover:bg-gray-800 '}`}
-              
-                  >
-                  <i className="fa-solid fa-comments"></i>
-
-                  <span>Comments</span>
-
-                </div>
-              </Link>
-            </li>
-
+              <li>
+                <Link to='/dashboard?tab=comments'>
+                  <div className={`sidebar-item ${tab === 'comments' ? 'sidebar-item-active' : ''}`}>
+                    <i className="fa-solid fa-comments sidebar-icon"></i>
+                    <span className="sidebar-text">Comments</span>
+                  </div>
+                </Link>
+              </li>
             </>
-            
           )}
   
           {/* Sign Out Button */}
           <li>
-            <button onClick={handleSignOut} className="w-full flex items-center gap-3 p-3 rounded-lg transition-all 
-            bg-btn-primaryRed
-              ">
-              <i className="fa-solid fa-arrow-right-from-bracket text-lg"></i>
-              <span>Sign Out</span>
+            <button onClick={handleSignOut} className="sidebar-signout">
+              <i className="fa-solid fa-arrow-right-from-bracket sidebar-icon"></i>
+              <span className="sidebar-text">Sign Out</span>
             </button>
           </li>
         </ul>
       </div>
     );
-  }
-  
+}

@@ -1,0 +1,926 @@
+var i;
+var slidebars_controller;
+
+// Fixes empty data sources for picturefill images
+function fixEmptyDataSrc(selector) {
+    $(selector).each(function () {
+        var imageUrl = $(this).find('span > span:first-child').attr('data-src');
+        var emptySpans = [];
+        var emptyImg = $(this).find('span > img[src=""]');
+        var scope = $(this);
+        emptySpans.push($(scope).find('span[data-src=""]'));
+
+        for (var i = 0; i < emptySpans.length; i++) {
+            $(emptySpans[i]).attr("data-src", imageUrl);
+        }
+
+        emptyImg.attr("src", imageUrl);
+    });
+}
+
+// Change heights of all child elements
+// to the height of the tallest child
+function equalHeight(group) {
+    var tallest = 0;
+
+    group.each(function () {
+        var thisHeight = $(this).height();
+
+        if (thisHeight > tallest) {
+            tallest = thisHeight;
+        }
+    });
+
+    group.height(tallest);
+}
+
+$(document).ready(function () {
+
+    (function () {
+
+		$("body").on("keydown", ".cc-btn", function (e) { if (e.which == 32 || e.which == 13) { $(".cc-btn")[0].click(); } })
+
+		// add menuitem role to dropdown links
+		//$(".hopeDropdownContent ul a").attr("role", "menuitem");
+
+        // Mobile navigation
+        var mmenu = true;
+
+        if (mmenu) {
+        
+        	$.ajax({
+            	method: "get", 
+                url: document.domain == "wwwdb1.hope.ac.uk" ? "https://wwwdb1.hope.ac.uk/terminalfour/preview/1/en/15416" : "/footer/mobilemenusitemap/",
+                dataType: "html",
+                success: function (data) {
+                	
+                  $("#mmenu").append(data);
+        
+                  // Add Selected class to currently open section using the current url
+                  var url_matches = $("#mmenu a[href$='//" + location.host + location.pathname + "']");
+                  var lowest_match = null;
+                  var lowest_depth = null;
+
+                  // Find lowest example in tree of this url
+                  url_matches.each(function (i) {
+                      var depth = $(this).parentsUntil("#mmenu").length;
+
+                      if ((lowest_depth == null || depth < lowest_depth) && $(this).text() != "Home") {
+                          lowest_depth = depth;
+                          lowest_match = $(this);
+                      }
+                  });
+
+                  // If one has been found, add the Selected class
+                  if (lowest_match) {
+                      lowest_match.parent().addClass("mm-opened").addClass("Selected");
+                  }
+
+                  if ($("#mmenu").length > 0)
+                  {
+                    // Sort out the tree - don't want the main sections to be children of the root Liverpool Hope University node
+                    //$("#mmenu>ul").unwrap();
+                    //$("#mmenu>li").wrap("<ul>");
+                    
+                    //$("#mmenu>a").first().text("Home");
+                    //$("#mmenu>a").wrap("<li>");
+                    //$("#mmenu>li").prependTo("#mmenu>ul")
+
+                    //Mmenu.configs.offCanvas.page.selector = ".main_body";
+
+
+                    document.mmenu = new Mmenu("#mmenu", 
+                        {
+                            navbar: { add: false },
+                            navbars: [{ content: ["prev", "title", "close"] }],
+                            extensions: [ "pagedim-black" ],
+                            keyboardNavigation: {
+                                enable: true,
+                                enhance: true,
+                            }
+                        },
+                        {
+                            offCanvas: { page: { selector: ".main_body"}}
+                        }
+                    );
+                          
+                    document.mmenu_api = document.mmenu.API;
+
+                    $("#show-off-screen-nav").on("click", function () {
+                        document.mmenu.API.open();
+                    });
+
+                    // if the currently selected section has a submenu, show that
+                    var panel = $(".mm-listitem_selected").children(".mm-btn").attr("href")
+                    if (panel) {
+                        document.mmenu_api.openPanel($(panel).get(0))
+                    }
+                    
+                    
+
+                  }
+				}
+			});
+
+        }
+        else {
+            $("#show-off-screen-nav").sidr();
+
+            $("#sidr ul ul ul").slideUp();
+            $("#sidr ul ul li:has(ul)").prepend("<i class='fa fa-angle-down sidr-submenu-toggle'></i>");
+            $(".sidr-submenu-toggle").on("click", function () { $(this).parent("li").children("ul").slideToggle(); });
+        }
+
+        // Mobile section menu
+        $(".mobile-section-menu .section-menu").hide();
+        $(".mobile-section-menu .section-menu-trigger").on("click",
+            function () {
+                $(".mobile-section-menu .section-menu").slideToggle("fast")
+            }
+        );
+
+        //
+        // Slideshows + carousels
+        //
+
+        if ($('.owl-carousel').length > 0) {
+            $('.owl-carousel').owlCarousel({
+                margin: 10,
+                dots: false,
+                responsive: {
+                    0: { items: 2 },
+                    480: { items: 3 }
+                }
+            });
+        }
+
+        if ($('#slideshow ul').length) {
+            // Start the slideshow on the homepage
+            $('#slideshow ul').responsiveSlides({
+                auto: true,
+                timeout: 5000,
+                speed: 500,
+                pager: true,
+                namespace: "rslides",
+            });
+            // Fix any invalid data-src attributes
+            fixEmptyDataSrc('.rslides li');
+            // now unhide it
+
+            $('#slideshow').css('display', 'block');
+        }
+
+        if ($('.slideshow_landing ul').length) {
+            // Start the slideshow on the homepage
+            $('.slideshow_landing ul').responsiveSlides({
+                auto: true,
+                timeout: 5000,
+                speed: 500,
+                pager: true,
+                namespace: "rslides",
+            });
+            // Fix any invalid data-src attributes
+            fixEmptyDataSrc('.rslides li');
+            // now unhide it
+
+            $('.slideshow_landing').css('display', 'block');
+        }
+
+
+        // Highlight current page in secondary navigation
+        var levels = $("#secondaryNavigation [class^=currentbranch]").map(function (item) {
+            return $(this).prop("class").substr(-1, 1)
+        }).get();
+
+        var highest_level = levels.reduce(function (acc, item) {
+            return (item > acc) ? item : acc;
+        }, 0);
+
+		// give the current page a different class and set the aria-current property to true
+        $("#secondaryNavigation .currentbranch" + highest_level)
+            .addClass("current")
+            .children("a")
+            .attr("aria-current", "true");
+
+        // News pagination test
+        if ($("div.pagination").length > 0) {
+            // Get all pagination controls
+            var pagination_elements = $("div.pagination").children("a, span.currentpage");
+            var element_count = pagination_elements.length;
+
+            var current = $("span.currentpage");
+            var current_index = pagination_elements.index(current);
+
+            pagination_elements.hide();
+
+            // Go through and show the current page and its surrounding pages
+            // Plus the first/last/next/prev controls
+            pagination_elements.each(function (i, el) {
+                if (
+                    (i < 1) ||
+                    (i >= element_count - 1) ||
+                    ((i > current_index - 4) &&
+                        (i < current_index + 4))
+                ) {
+                    $(this).show();
+                    return;
+                }
+            });
+
+            // Show [...]s to abbreviate big gaps between the first/last controls
+            // and the current page - these can be clicked to show all pages
+            if (current_index > 5) {
+                pagination_elements.eq(1).after('<span class="pagination_show_all">...</span>');
+            }
+
+            if (current_index < element_count - 6) {
+                pagination_elements.eq(element_count - 2).before('<span class="pagination_show_all">...</span>');
+            }
+
+            // Bind click events to the [...] buttons
+            $(".pagination_show_all").on("click", function () {
+                pagination_elements.show();
+                $(".pagination_show_all").hide();
+            });
+
+            // Rename first and last page buttons
+            if ($("div.pagination a").last().text() == ">>") {
+                $("div.pagination a").last().text("Last");
+            }
+
+            if ($("div.pagination a").first().text() == "<<") {
+                $("div.pagination a").first().text("First");
+            }
+        }
+
+        // Mid-content toggles
+        $(".toggle").children().not("h1, h2, h3").hide();
+        
+        // aria & keyboard accessibility
+        $(".toggle").children("h1, h2, h3").prop("tabindex", 0);
+        $(".toggle").children("h1, h2, h3").attr("aria-haspopup", true);
+        $(".toggle").children("h1, h2, h3").attr("aria-expanded", false);
+        
+        $(".toggle h1, .toggle h2, .toggle h3").on("click keydown", function (e) {
+        
+        	if (e.type == "click" || (e.type == "keydown" && (e.which == 13 || e.which == 32)))
+            {
+            	// don't scroll the page down when pressing space
+            	if (e.which == 32)
+				{
+					e.preventDefault();
+				}
+            
+            	// open and close the toggle
+            	$(this).siblings().slideToggle("fast");
+
+				if ($(this).hasClass("open"))
+				{
+					$(this).removeClass("open");
+                    $(this).attr("aria-expanded", false);
+				}
+                else
+				{
+                	$(this).addClass("open");
+                    $(this).attr("aria-expanded", true);
+				}
+			}
+        })
+
+        // Tabbing on course pages
+
+        $(".course_tab_body").hide();
+        $(".course_tab_body").first().show();
+        $(".course_tab_body").first().attr("aria-hidden", false);
+
+        // Select first tab
+        $(".course_tab_menu")
+            .first()
+            .addClass("selected")
+            .attr("aria-selected", true);
+
+        $(".course_tab_menu")
+            .not(":first")
+            .removeClass("selected")
+            .attr("aria-selected", false);
+
+        $(".course_tab_menu").on("click", function () {
+
+            // Show the content for this tab
+            var id = "#" + $(this).data("target");
+            var panel = $(id);
+
+            // Hide other tab content
+            $(".course_tab_body")
+                .not(panel)
+                .attr("aria-hidden", true)
+                .hide();
+
+            // Show this tab's content
+            panel
+                .attr("aria-hidden", false)
+                .show();
+
+            // Deselect all other tabs
+            $(".course_tab_menu")
+                .not($(this))
+                .removeClass("selected")
+                .attr("aria-selected", false);
+
+            // Select this tab
+            $(this)
+                .addClass("selected")
+                .attr("aria-selected", true);
+        });
+
+        $(".course_tab_menu").on("keydown", function (e) {
+
+            // Allow Enter & Space keypresses to select a tab
+            if (e.keyCode == 32 || e.keyCode == 13) {
+                e.preventDefault();
+                $(this).trigger("click");
+            }
+
+            // Left arrow
+            else if (e.keyCode == 37) {
+                var first = $(".course_tab_menu").first();
+
+                if ($(this).is(first) == false) {
+                    $(this).prev().focus();
+                }
+            }
+
+            // Right Arrow
+            else if (e.keyCode == 39) {
+                var last = $(".course_tab_menu").last();
+
+                if ($(this).is(last) == false) {
+                    $(this).next().focus();
+                }
+            }
+        });
+
+        var tab_count = $(".course_tab_menu").length;
+        var tab_width = (100.0 / tab_count);
+        var margin_percent = 0.5;
+        var padding_percent = 1;
+
+        // Middle tabs have margins both edges,
+        // Outer tabs only on their inside edge
+        $(".course_tab_menu").each(function (index) {
+
+            var defaultwidth = $(this).data("defaultwidth");
+            var width = (typeof defaultwidth == "undefined") ? tab_width : defaultwidth;
+
+            if (index == 0 || index == (tab_count - 1)) {
+                width = width - (margin_percent / 2) - padding_percent;
+            }
+            else {
+                width = width - margin_percent - padding_percent;
+            }
+
+            $(this).width(width + "%");
+        });
+
+        $(".course_list_combined, .study_abroad_list_body").hide();
+
+        $(".course_list_main, .study_abroad_list_heading").on("click", function () {
+            var target = $(this).data("target");
+            console.log("toggle " + target);
+            $("#" + target).slideToggle("fast");
+
+            var arrow = $(this).children(".course_list_arrow").first();
+
+            if (arrow.hasClass("right")) {
+                arrow.removeClass("right");
+                arrow.addClass("down");
+
+                $(this).attr("aria-expanded", true);
+            }
+            else {
+                arrow.removeClass("down");
+                arrow.addClass("right");
+
+                $(this).attr("aria-expanded", false);
+            }
+        });
+
+        $(".course_az_letter").on("click", function () {
+            var letter = $(this).attr("href");
+            $(letter)
+                .next()
+                .focus();
+        });
+
+        // Allow Enter & Space keypresses to select a letter
+        $(".course_az_letter").on("keydown", function (e) {
+            if (e.keyCode == 32 || e.keyCode == 13) {
+                e.preventDefault();
+                $(this).trigger("click");
+            }
+        }
+        );
+
+
+        // Allow Enter & Space keypresses to select a course
+        $(".course_list_main").on("keydown", function (e) {
+            if (e.keyCode == 32 || e.keyCode == 13) {
+                e.preventDefault();
+                $(this).trigger("click");
+            }
+        }
+        );
+
+        // If there's a query string at the end of the url, check if it's a tab name
+        var a = location.href;
+        var query_index = a.indexOf("?");
+
+        if (query_index >= 0) {
+            var type = a.substring(query_index + 1);
+
+            if (type == "employability") {
+                type = "careers";
+            } a
+
+            var tab_menu = $("[data-target='" + type + "']");
+
+            // If it is a tab name, select that tab
+            if (tab_menu.length > 0) {
+                var tab_page = $("#" + type);
+
+                $(".course_tab_body").first().hide();
+                $(".course_tab_menu").first().removeClass("selected");
+
+                tab_menu.addClass("selected");
+                tab_page.show();
+            }
+        }
+
+        //
+        // Pages can have images which when clicked replace themselves with youtube videos
+        //
+
+        function close_youtube_overlay()
+        {
+        	$("#youtube_overlay").remove();
+        	$("body").removeClass("noScroll");
+            $("body, #youtube_overlay iframe").off('keydown.youtube_overlay');
+        }
+
+        $(".youtube_embed").on("click", function () {
+            if ($("#youtube_overlay").length == 0) {
+                $("body").addClass("noScroll");
+                $("body")
+                	.append(
+                    	"<div id='youtube_overlay'>" + 
+						"<div><button class='youtube_overlay_close screenreader' aria-label='Close Video'><i aria-hidden='true' class='fa fa fa-times-circle'></i> Close</button></div>" +
+                        "<iframe src='https://www.youtube.com/embed/" + $(".youtube_embed").data("youtube") + "' sandbox='allow-scripts allow-same-origin'></iframe>" + 
+                        "<div><button class='youtube_overlay_close screenreader' aria-label='Close Video'><i aria-hidden='true' class='fa fa fa-times-circle'></i> Close</button></div>" +
+                        "</div>"
+					);
+                    
+                $("#youtube_overlay iframe").on("load", function () { $('#youtube_overlay iframe').focus(); });
+
+                $("#youtube_overlay, .youtube_overlay_close").on("click", close_youtube_overlay);
+                
+                $("body, #youtube_overlay iframe").on('keydown.youtube_overlay', function (e) {
+                	if (e.key === 'Escape')
+                    {
+                		close_youtube_overlay();
+                	}
+                });
+            }
+        });
+
+        var menuSelector = ".hopeDropdownMenuItem:not(:last-child)";
+        var contentSelector = ".hopeDropdownContent";
+
+        var menu_is_open = false;
+
+        var timeout = null;
+        var timeout_time = 300;
+        var timeout_touch = 100;
+
+        var open_timeout = null;
+        var open_timeout_time = 75;
+
+        // Close all open dropdowns
+        var closeDropdowns = function () {
+            if (menu_is_open) {
+                $(contentSelector).hide();
+                $(menuSelector).data("open", false);
+				$(menuSelector).attr("aria-expanded", false)
+				$(contentSelector).attr("aria-expanded", false)
+                menu_is_open = false;
+
+                stopMenuTimeout();
+            }
+        };
+
+		$(contentSelector).hide();
+		
+        // Clear any active timeouts
+        var stopMenuTimeout = function () {
+            clearTimeout(timeout);
+            timeout = null;
+        };
+
+        // Start a timeout which will close the dropdowns
+        var startMenuTimeout = function (dur) {
+            if (dur === undefined) {
+                dur = timeout_time;
+            }
+
+            timeout = setTimeout(closeDropdowns, dur);
+        };
+
+        // Start a timeout which will open a dropdown
+        var startOpenMenuTimeout = function (drop, dur) {
+            if (dur === undefined) {
+                dur = open_timeout_time;
+            }
+
+            var openDropdown = function () {
+                $(drop).show();
+                $(drop).data("open", true);
+				$(drop).attr("aria-expanded", "true")
+				$("#" + $(drop).attr("aria-labelledby")).attr("aria-expanded", "true")
+                menu_is_open = true;
+            }
+
+            stopMenuTimeout();
+
+            clearTimeout(open_timeout);
+            open_timeout = setTimeout(openDropdown, dur);
+        }
+
+        // Clear any active timeouts
+        var stopOpenMenuTimeout = function () {
+            clearTimeout(open_timeout);
+            open_timeout = null;
+        };
+
+
+        // Set up the data-targets to tell the menu items which dropdown to open
+        $(menuSelector).each(function (index) {
+            $(this).data("target", "hopeDropdown" + index);
+        });
+
+        // Set up the IDs for the dropdowns
+        $(contentSelector).each(function (index) {
+            $(this).prop("id", "hopeDropdown" + index);
+        });
+
+        // Open the dropdown for the given menu link on mouseenter
+        $(menuSelector).on("mouseenter", function (e) {
+            var target = $(this).data("target");
+			
+            closeDropdowns();
+
+            // We only want this dropdown to be marked as open
+            startOpenMenuTimeout("#" + target);
+        });
+		
+		// open the dropdown by giving the link focus and pressing space or enter
+		$(menuSelector).on("keydown", function (e) {
+		
+			// only works with spacebar or enter
+			if (e.which != 32 && e.which != 13)
+			{
+				return;
+				
+			}
+			
+			e.preventDefault();
+			
+			var target = "#" + $(this).data("target");
+			
+			stopMenuTimeout();
+			$(contentSelector).hide();
+			
+			// close currently open menu
+			if ($(this).attr("aria-expanded") == "true")
+			{
+				$(target).hide();
+				$(target).data("open", false);
+				$(target).attr("aria-expanded", false)
+				$(this).attr("aria-expanded", false);
+				menu_is_open = false;
+			}
+			// open currently closed menu
+			else
+			{
+				$(target).show();
+				$(target).data("open", true);
+				$(target).attr("aria-expanded", true)
+				$(this).attr("aria-expanded", true);
+				menu_is_open = true;
+			}
+		});
+		
+        // When the mouse leaves the menu link,
+        // start the timeout to close it
+        // and cancel the timeout to open it (if it's not already open)
+        $(menuSelector).on("mouseleave", function () {
+            startMenuTimeout();
+            stopOpenMenuTimeout();
+        });
+
+        // When the mouse enters the dropdown,
+        // stop the timeout which would close it
+        $(contentSelector).on("mouseenter focus", function () {
+            stopMenuTimeout();
+        });
+		
+        // When the tab cursor enters the dropdown,
+        // stop the timeout which would close it
+        $(contentSelector + " a").on("focus", function () {
+            stopMenuTimeout();
+        });
+
+        // When the mouse leaves the dropdown,
+        // start the timeout which will close it
+        $(contentSelector).on("mouseleave", function () {
+            startMenuTimeout();
+        });
+
+        // Touching something that isn't the dropdown links or dropdown boxes
+        // will start the timeout to close the dropdown boxes
+        // (Problem is that this also affects child content WITHIN the dropdown box!)
+        $(":not(" + contentSelector + "," + menuSelector + ")").on("touchend", function () {
+            if (menu_is_open) {
+                startMenuTimeout(timeout_touch);
+            }
+        });
+
+        // If you touch a link within the dropdown, it will trigger the above timeout
+        // because it doesn't match the selectors and try to close the dropdown.
+        // The touch event propagates down to the contentSelector's div - so this is saying
+        // if you go down and find a match to contentSelector, don't close the dropdown				
+        $(contentSelector).on("touchend", function () {
+            event.stopPropagation();
+            stopMenuTimeout();
+        });
+
+        // What to do when a menu link is clicked
+        $(menuSelector).on("click", function (event) {
+
+            // Prevent the standard click handler
+            // and instead make our own jquery click event
+            // so that it can be triggered by the touchend event
+            if ($(this).attr("role") == "button")
+			{
+              event.preventDefault();
+
+              if (menu_is_open)
+              {
+                  startMenuTimeout();
+                  stopOpenMenuTimeout();
+              }
+              else
+              {
+                  startOpenMenuTimeout("#" + $(this).data("target"));
+              }
+			}
+        });
+
+        // Add a data-moved property if we move during this touch event
+        $(menuSelector).on("touchmove", function (event) {
+            $(this).data("moved", true);
+        });
+
+        // Handler for when a touch event finishes
+        $(menuSelector).on("touchend", function (event) {
+        
+            // Stop touches triggering a click
+            event.preventDefault();
+            event.stopPropagation();
+
+            // Don't do anything if we have moved/dragged during the touch
+            if ($(this).data("moved") !== true) {
+                // If the dropdown is already open, 
+                // touching it again should open the link
+                if ($(this).data("open") == true) {
+                    $(this).trigger("click");
+                }
+                // Trigger the mouseenter event to show the dropdown
+                else {
+                    $(this).trigger("mouseenter");
+                }
+            }
+
+            $(this).removeData("moved");
+        });
+        
+        // Allow esc key to close any open dropdowns
+        $(window).on("keydown", function (e) {
+            if (e.which == 27 && $(".hopeDropdownContent[aria-expanded='true']").length > 0)
+            {
+                closeDropdowns();
+            }
+        });
+
+
+        //
+        // Used to shrink and grow the header as user scrolls
+        //
+
+        var lastScrollPos = 0;
+        var HEADER_SHRINK = 80;
+
+        var scroll_container = $(document);
+
+        var checkScroll = function () {
+            var scrollPos = scroll_container.scrollTop();
+
+            if (lastScrollPos === scrollPos) {
+                return;
+            }
+
+            // Close the course finder and menu on scrolling
+            closeDropdowns();
+            closeCourseFinderWidget();
+            $(".menuCourseFinderWidget2017").slideUp();
+
+            if (lastScrollPos > HEADER_SHRINK && scrollPos < HEADER_SHRINK) {
+                $(".main-header").removeClass("reduced");
+
+                $(".mobile-header").removeClass("reduced");
+                $(".mobile-menu").removeClass("reduced");
+            }
+
+            else if (lastScrollPos < HEADER_SHRINK && scrollPos >= HEADER_SHRINK) {
+                $(".main-header").addClass("reduced");
+
+                $(".mobile-header").addClass("reduced");
+                $(".mobile-menu").addClass("reduced");
+            }
+
+            lastScrollPos = scrollPos;
+        }
+
+        // Check at a certain refresh rate for a change in scrolling
+        setInterval(checkScroll, 200);
+
+
+        //
+        //	Course Finder
+        //	
+
+        var closeCourseFinderWidgetTimeout = null;
+
+        var closeCourseFinderWidget = function () {
+            $(".course-finder-widget").slideUp();
+            closeCourseFinderWidgetTimeout = null;
+        };
+
+        // Click the title to open/close
+        $(".course-finder-toggle").on("click keydown", function (e) {
+        
+        	if (e.type == "keydown")
+			{
+            	if (e.which != 32 && e.which != 13)
+				{
+                	return;
+                }
+                
+                e.preventDefault();
+			}
+            
+            // Clear existing timeouts
+            clearTimeout(closeCourseFinderWidgetTimeout);
+            closeCourseFinderWidgetTimeout = null;
+
+            $(".course-finder-widget").slideToggle();
+            $(this).attr("aria-expanded", !($(this).attr("aria-expanded")=="true"));
+        });
+
+        // When the user's mouse leaves the box, set a timeout to close it
+        $(".course-finder-widget,.course-finder-toggle").on("mouseleave", function () {
+            closeCourseFinderWidgetTimeout = setTimeout(closeCourseFinderWidget, 500);
+        });
+
+        // If the user goes back into the box, cancel the timeout
+        $(".course-finder-widget").on("mouseenter", function () {
+            clearTimeout(closeCourseFinderWidgetTimeout);
+            closeCourseFinderWidgetTimeout = null;
+        });
+
+
+        $(".course-finder-widget,.course-finder-toggle").on("touchend", function (event) {
+            event.stopPropagation();
+        });
+
+        $("#headerCourseFinderAtoZselect").mouseleave(function (event) {
+            event.stopPropagation();
+        });
+
+        // Touching something that isn't the course finder will close it
+        $(":not(.course-finder-widget,.course-finder-toggle)").on("touchend", function () {
+            if ($(this).parents(".course-finder-widget").length == 0) {
+                closeCourseFinderWidgetTimeout = setTimeout(closeCourseFinderWidget, 100);
+            }
+        });
+
+
+        // Init course finder dropdowns
+        $('select.headerCourseFinderAtoZselect').each(function () {
+
+            // Get all options in the dropdown
+            var options = $(this).children("option");
+
+            // Make an array of their text and values
+            var arr = options.map(function (_, o) { return { t: $(o).text(), v: o.value }; }).get();
+
+            // Sort them by text
+            arr.sort(function (o1, o2) {
+                return o1.t > o2.t ? 1 : o1.t < o2.t ? -1 : 0;
+            });
+
+            // Overwrite the text and values of the existing options with the sorted values
+            options.each(function (i, o) {
+                o.value = arr[i].v;
+                $(o).text(arr[i].t);
+                $(o).removeAttr('selected');
+            });
+
+            // add a placeholder option to the dropdown
+            $(this).prepend($("<option>", { value: "Select Course", text: "Select Course", selected: "selected" }));
+            $(this).val("Select Course");
+
+            $(this).on("change", function () {
+                var option_value = $(this).children("option:selected").first().val();
+
+                if (option_value !== "Select Course") {
+                    window.location = option_value;
+                }
+            });
+        });
+
+        // For mobile view course finder dropdown
+        $(".mobile-header .course-finder").on("click", function () {
+            $(".mobile-course-finder-widget").slideToggle();
+        });
+        
+        // Search box with dropdown selecting the type of search
+        $(".header-search").on("submit", function () {
+            var $this = $(this);
+
+            var action = $this.find("select").val() == "website"
+                            ? "//www.hope.ac.uk/searchresults/"
+                            : "//www.hope.ac.uk/studyathope/coursefinder/";
+
+            $this.prop("action", action);
+
+            var name = $this.find("select").val() == "website"
+                            ? "q"
+                            : "keyword";
+
+            $(".header-search input[type='search']").prop("name", name);
+        });
+
+        // Primo Search
+        function searchPrimo() {
+            document.getElementById("primoQuery").value = "any,contains," + document.getElementById("primoQueryTemp").value.replace(/[,]/g, " ");
+            document.forms["searchForm"].submit();
+        }
+
+        $("#primoQueryTab").on("change", function () {
+            var tab = $(this).val();
+            var mappings = {
+                "Everything": "MyInst_and_CI",
+                "LibraryCatalog": "MyInstitution",
+                "CentralIndex": "CentralIndex"
+            }
+
+            if (mappings.hasOwnProperty(tab)) {
+                $("#primoQuerySearchScope").val(mappings[tab]);
+            }
+        });
+
+        $("#simple #go").on("click", searchPrimo);
+        $("#simple #primoQueryTemp").on("keydown", function (e) {
+            if (e.keyCode == 13) {
+                e.preventDefault();
+                searchPrimo();
+            }
+        });
+
+		// Webforms
+		$(".webforms").each(function (){
+			var form_id = parseInt($(this).data("form_id"), 10);
+			
+			if (form_id)
+			{
+				$(this).append("<script src='https://info.hope.ac.uk/webforms/index.php/Webform/js/" + form_id + "' type='text/javascript'></script>");
+			}
+		});
+
+    })();
+});
+
+
+
+
+
+

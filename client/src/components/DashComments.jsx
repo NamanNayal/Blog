@@ -3,6 +3,8 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
 import { FaCheck, FaTimes, FaExternalLinkAlt } from 'react-icons/fa';
+import Loading from './Loading'; // Adjust path as needed
+import Alert from './Alert'; // Adjust path as needed
 
 export default function DashComments() {
   const { currentUser } = useSelector((state) => state.user);
@@ -13,6 +15,9 @@ export default function DashComments() {
   const [commentIdToDelete, setCommentIdToDelete] = useState('');
   const [usernames, setUsernames] = useState({});
   const [expandedComments, setExpandedComments] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [totalComments, setTotalComments] = useState(0);
+  const [alert, setAlert] = useState(null);
 
   // Function to toggle comment expansion
   const toggleCommentExpansion = (commentId) => {
@@ -64,32 +69,61 @@ export default function DashComments() {
     setUsernames(prev => ({ ...prev, ...usernameMap }));
   };
 
+  // Helper function to format comment ID for display
+  const formatCommentId = (id) => {
+    return id ? `#${id.slice(-6).toUpperCase()}` : '#UNKNOWN';
+  };
+
+  // Helper function to get relative time
+  const getRelativeTime = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInMs = now - date;
+    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+    
+    if (diffInDays === 0) return 'Today';
+    if (diffInDays === 1) return 'Yesterday';
+    if (diffInDays < 7) return `${diffInDays} days ago`;
+    if (diffInDays < 30) return `${Math.floor(diffInDays / 7)} weeks ago`;
+    if (diffInDays < 365) return `${Math.floor(diffInDays / 30)} months ago`;
+    return `${Math.floor(diffInDays / 365)} years ago`;
+  };
+
   useEffect(() => {
     const fetchComments = async () => {
+      setLoading(true);
       try {
         const res = await fetch(`/api/comment/getcomments`);
         const data = await res.json();
         console.log("Fetched comments:", data);
         
         if (res.ok) {
-          setComments(data.comments);
-          await fetchUsernamesForComments(data.comments);
+          setComments(data.comments || []);
+          setTotalComments(data.totalComments || data.comments?.length || 0);
+          await fetchUsernamesForComments(data.comments || []);
           
-          if (data.comments.length < 9) {
+          if (!data.comments || data.comments.length < 9) {
             setShowMore(false);
           }
+        } else {
+          setAlert({ type: 'danger', message: data.message || 'Failed to fetch comments' });
         }
       } catch (error) {
         console.log("Error fetching comments:", error.message);
+        setAlert({ type: 'danger', message: 'Network error while fetching comments' });
+      } finally {
+        setLoading(false);
       }
     };
-    if (currentUser.isAdmin) {
+    
+    if (currentUser?.isAdmin) {
       fetchComments();
     }
   }, [currentUser]);
 
   const handleShowMore = async () => {
     const startIndex = comments.length;
+    setLoading(true);
     try {
       const res = await fetch(
         `/api/comment/getcomments?startIndex=${startIndex}`
@@ -112,9 +146,16 @@ export default function DashComments() {
       } else {
         console.log("No new comments found or error in response");
         setShowMore(false);
+        if (!res.ok) {
+          setAlert({ type: 'warning', message: 'No more comments to load' });
+        }
       }
     } catch (error) {
       console.log("Error in handleShowMore:", error.message);
+      setShowMore(false);
+      setAlert({ type: 'danger', message: 'Error loading more comments' });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -131,20 +172,62 @@ export default function DashComments() {
         setComments((prev) =>
           prev.filter((comment) => comment._id !== commentIdToDelete)
         );
+        setTotalComments(prev => prev - 1);
+        setShowDeleteModal(false);
+        setCommentIdToDelete('');
+        setAlert({ type: 'success', message: 'Comment deleted successfully' });
       } else {
         console.log(data.message);
+        setAlert({ type: 'danger', message: data.message || 'Failed to delete comment' });
       }
     } catch (error) {
       console.log(error.message);
+      setAlert({ type: 'danger', message: 'Network error while deleting comment' });
     }
-    setShowDeleteModal(false);
   };
 
+  if (!currentUser?.isAdmin) {
+    return (
+      <div className="w-full min-h-screen flex items-center justify-center">
+        <p className="text-lg">Access denied. Admin privileges required.</p>
+      </div>
+    );
+  }
+
+  if (loading && comments.length === 0) {
+    return <Loading text="Loading comments..." overlay={true} />;
+  }
+  
+
+
   return (
-    <div className="w-full min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="w-full min-h-screen transition-all duration-300">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        {currentUser.isAdmin && comments.length > 0 ? (
+        {/* Alert Component */}
+        {alert && (
+          <div className="mb-4">
+            <Alert type={alert.type} message={alert.message} />
+            <button 
+              onClick={() => setAlert(null)}
+              className="mt-2 text-sm text-[#393e46] dark:text-[#E6E6FF] underline hover:no-underline"
+            >
+              Dismiss
+            </button>
+          </div>
+        )}
+
+        {currentUser?.isAdmin && comments.length > 0 ? (
           <>
+            {/* Header with comment count */}
+            <div className="mb-6">
+              <h1 className="text-2xl font-bold mb-2 font-montserrat">
+                Comment Management
+              </h1>
+              <p>
+                Showing {comments.length} of {totalComments} comments
+              </p>
+            </div>
+
             {/* Mobile view: Stack cards vertically */}
             <div className="block lg:hidden">
               <div className="space-y-4">
@@ -153,17 +236,21 @@ export default function DashComments() {
                   const shouldShowReadMore = comment.content.length > 100;
                   
                   return (
-                    <div key={comment._id} className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-all duration-200">
+                    <div key={comment._id} className="rounded-lg shadow-sm border border-[#5A5AFF]/20 dark:border-[#3A3AFF]/30 hover:shadow-md hover:border-[#5A5AFF]/40 dark:hover:border-[#3A3AFF]/50 transition-all duration-200">
                       <div className="p-4 sm:p-6">
-                        {/* Header with date */}
+                        {/* Header with date, comment ID, and delete button */}
                         <div className="flex justify-between items-start mb-4">
-                          <div className="text-sm text-gray-500 dark:text-gray-400">
-                            {new Date(comment.updatedAt).toLocaleDateString()}
+                          <div>
+                            <div className="text-sm">
+                              {new Date(comment.updatedAt).toLocaleDateString()}
+                            </div>
+                            <div className="text-xs mt-1">
+                              {formatCommentId(comment._id)} • {getRelativeTime(comment.updatedAt)}
+                            </div>
                           </div>
                           <button 
-                            className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 text-sm font-medium px-3 py-1 rounded-md hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200"
-                            onClick={(e) => {
-                              e.stopPropagation();
+                            className="bg-btn-primaryRed text-sm font-medium px-3 py-1 rounded-md transition-all duration-200"
+                            onClick={() => {
                               setShowDeleteModal(true);
                               setCommentIdToDelete(comment._id);
                             }}
@@ -174,8 +261,8 @@ export default function DashComments() {
                         
                         {/* Comment content */}
                         <div className="mb-4">
-                          <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Comment</h4>
-                          <div className="text-gray-800 dark:text-gray-200 leading-relaxed">
+                          <h4 className="text-sm font-semibold mb-2 font-montserrat">Comment</h4>
+                          <div className="leading-relaxed">
                             <p className="break-words">{renderCommentContent(comment, isExpanded)}</p>
                             {shouldShowReadMore && (
                               <button
@@ -183,7 +270,7 @@ export default function DashComments() {
                                   e.stopPropagation();
                                   toggleCommentExpansion(comment._id);
                                 }}
-                                className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium text-sm mt-2 transition-colors duration-200"
+                                className="text-[#5A5AFF] hover:text-[#4A4AFF] dark:text-[#7A7AFF] dark:hover:text-[#6A6AFF] font-medium text-sm mt-2 transition-colors duration-200 cursor-pointer"
                               >
                                 {isExpanded ? 'Show less' : 'Read more'}
                               </button>
@@ -194,16 +281,16 @@ export default function DashComments() {
                         {/* Metadata */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                           <div>
-                            <span className="text-gray-500 dark:text-gray-400">Likes:</span>
-                            <span className="ml-2 font-medium text-gray-800 dark:text-gray-200">{comment.numberOfLikes}</span>
+                            <span className="mr-2">Likes:</span>
+                            <span className="font-medium">{comment.numberOfLikes}</span>
                           </div>
                           <div>
-                            <span className="text-gray-500 dark:text-gray-400">User:</span>
-                            <span className="ml-2 font-medium text-gray-800 dark:text-gray-200">{usernames[comment.userId] || 'Loading...'}</span>
+                            <span className="mr-2">User:</span>
+                            <span className="font-medium">{usernames[comment.userId] || 'Loading...'}</span>
                           </div>
                           <div className="sm:col-span-2">
-                            <span className="text-gray-500 dark:text-gray-400">Post ID:</span>
-                            <span className="ml-2 font-mono text-xs text-gray-700 dark:text-gray-300 break-all">{comment.postId}</span>
+                            <span className="mr-2">Post ID:</span>
+                            <span className="font-mono text-xs break-all">{comment.postId}</span>
                           </div>
                         </div>
                       </div>
@@ -215,32 +302,35 @@ export default function DashComments() {
             
             {/* Desktop view: Table layout */}
             <div className="hidden lg:block">
-              <div className="bg-white dark:bg-gray-800 shadow-sm rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+              <div className="shadow-sm rounded-lg border border-[#5A5AFF]/20 dark:border-[#3A3AFF]/30 overflow-hidden">
                 <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                    <thead className="bg-gray-50 dark:bg-gray-700">
+                  <table className="min-w-full divide-y divide-[#5A5AFF]/20 dark:divide-[#3A3AFF]/30">
+                    <thead className="">
                       <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider font-montserrat">
                           Date Updated
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider font-montserrat">
+                          Comment ID
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider font-montserrat">
                           Comment Content
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider font-montserrat">
                           Likes
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider font-montserrat">
                           Post ID
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider font-montserrat">
                           Username
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider font-montserrat">
                           Actions
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                    <tbody className="divide-y divide-[#5A5AFF]/10 dark:divide-[#3A3AFF]/20">
                       {comments.map((comment) => {
                         const isExpanded = expandedComments[comment._id];
                         const shouldShowReadMore = comment.content.length > 100;
@@ -248,13 +338,25 @@ export default function DashComments() {
                         return (
                           <tr 
                             key={comment._id} 
-                            className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
+                            className="hover:bg-[#e6e6ff]/50 dark:hover:bg-[#222831]/50 transition-colors duration-200 cursor-pointer"
                           >
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                              {new Date(comment.updatedAt).toLocaleDateString()}
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div>
+                                <div className="text-sm">
+                                  {new Date(comment.updatedAt).toLocaleDateString()}
+                                </div>
+                                <div className="text-xs">
+                                  {getRelativeTime(comment.updatedAt)}
+                                </div>
+                              </div>
                             </td>
-                            <td className="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
-                              <div className="min-w-0 max-w-md">
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span className="text-xs font-mono px-2 py-1 rounded border border-[#5A5AFF]/20">
+                                {formatCommentId(comment._id)}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 text-sm">
+                              <div className="min-w-0 max-w-xs lg:max-w-sm">
                                 <div className={`${isExpanded ? 'whitespace-normal break-words' : 'truncate'}`}>
                                   {renderCommentContent(comment, isExpanded)}
                                 </div>
@@ -264,29 +366,29 @@ export default function DashComments() {
                                       e.stopPropagation();
                                       toggleCommentExpansion(comment._id);
                                     }}
-                                    className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium text-sm mt-1 block transition-colors duration-200"
+                                    className="text-[#5A5AFF] hover:text-[#4A4AFF] dark:text-[#7A7AFF] dark:hover:text-[#6A6AFF] font-medium text-sm mt-1 block transition-colors duration-200 cursor-pointer"
                                   >
                                     {isExpanded ? 'Show less' : 'Read more'}
                                   </button>
                                 )}
                               </div>
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm">
                               {comment.numberOfLikes}
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                              <div className="max-w-xs truncate font-mono text-xs">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm">
+                              <div className="max-w-[120px] truncate font-mono text-xs">
                                 {comment.postId}
                               </div>
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                              <div className="max-w-xs truncate">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm">
+                              <div className="max-w-[100px] truncate">
                                 {usernames[comment.userId] || 'Loading...'}
                               </div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm">
                               <button 
-                                className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 font-medium transition-colors duration-200 px-3 py-1 rounded-md hover:bg-red-50 dark:hover:bg-red-900/20"
+                                className="bg-btn-primaryRed font-medium transition-colors duration-200 px-3 py-1 rounded-md"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   setShowDeleteModal(true);
@@ -305,52 +407,61 @@ export default function DashComments() {
               </div>
             </div>
             
-            {/* Show More button - responsive */}
+            {/* Show More button */}
             {showMore && (
               <div className="flex justify-center mt-6 sm:mt-8">
                 <button 
                   onClick={handleShowMore}
-                  className="px-6 sm:px-8 py-2 sm:py-3 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md font-medium text-sm sm:text-base"
+                  disabled={loading}
+                  className="bg-btn-secondary font-medium text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed px-6 sm:px-8 py-2 sm:py-3 rounded-lg shadow-sm hover:shadow-md transition-all duration-200"
                 >
-                  Show More
+                  {loading ? (
+                    <div className="flex items-center">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#5A5AFF] mr-2"></div>
+                      Loading...
+                    </div>
+                  ) : (
+                    `Show More (${comments.length}/${totalComments})`
+                  )}
                 </button>
               </div>
             )}
           </>
         ) : (
           <div className="text-center py-12">
-            <p className="text-gray-500 dark:text-gray-400 text-lg">You have no comments yet!</p>
+            <p className="text-lg">
+              {!currentUser?.isAdmin ? 'Access denied. Admin privileges required.' : 'No comments found!'}
+            </p>
           </div>
         )}
 
-        {/* Delete Modal - responsive */}
+        {/* Delete Modal using your custom modal styles */}
         {showDeleteModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full mx-4">
-              <div className="p-6">
-                <div className="flex items-center mb-4">
-                  <HiOutlineExclamationCircle className="text-red-500 text-2xl mr-3" />
-                  <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                    Confirm Deletion
-                  </h2>
-                </div>
-                <p className="text-gray-600 dark:text-gray-300 mb-6">
-                  Are you sure you want to delete this comment? This action cannot be undone.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-3 sm:gap-0 sm:space-x-3">
-                  <button 
-                    onClick={() => setShowDeleteModal(false)} 
-                    className="flex-1 px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors duration-200 font-medium"
-                  >
-                    Cancel
-                  </button>
-                  <button 
-                    onClick={handleDeleteComment} 
-                    className="flex-1 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors duration-200 font-medium"
-                  >
-                    Delete Comment
-                  </button>
-                </div>
+          <div className="modal-overlay">
+            <div className="modal-container">
+              <div className="modal-header flex items-center">
+                <HiOutlineExclamationCircle className="text-red-500 text-2xl mr-3" />
+                <h2>Confirm Deletion</h2>
+              </div>
+              <p className="mb-6">
+                Are you sure you want to delete this comment? This action cannot be undone and will permanently remove the comment.
+              </p>
+              <div className="modal-actions">
+                <button 
+                  onClick={() => {
+                    setShowDeleteModal(false);
+                    setCommentIdToDelete('');
+                  }}
+                  className="bg-btn-primary px-4 py-2 rounded-md font-medium"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={handleDeleteComment}
+                  className="bg-btn-primaryRed px-4 py-2 rounded-md font-medium"
+                >
+                  Delete Comment
+                </button>
               </div>
             </div>
           </div>
