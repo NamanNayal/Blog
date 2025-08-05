@@ -20,7 +20,6 @@ export default function CreatePost() {
     });
     const [publishError, setPublishError] = useState(null);
     const navigate = useNavigate();
-    console.log('Form Data:', formData);
 
 
     const handleUploadImage = async () => {
@@ -45,8 +44,7 @@ export default function CreatePost() {
     
           const data = await response.json();
 
-          console.log('Uploaded Image URL:', data.secure_url);
-          console.log('Full Cloudinary Response:', data);
+
     
           setImageUploading(false);
           setImageUploadError(null);
@@ -189,13 +187,12 @@ export default function CreatePost() {
                         const selectedFile = e.target.files[0];
                         if (selectedFile) {
                             setFile(selectedFile);
-                            console.log("File selected:", selectedFile.name);
                             
                             // Create local preview and store in state
                             const reader = new FileReader();
                             reader.onload = (event) => {
                                 setFilePreview(event.target.result);
-                                console.log("Local file preview ready");
+                            
                             };
                             reader.readAsDataURL(selectedFile);
                             

@@ -199,10 +199,12 @@ export default function Search() {
                   id='category'
                   className='w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
                 >
-                  <option value='uncategorized'>All Categories</option>
-                  <option value='reactjs'>React.js</option>
-                  <option value='nextjs'>Next.js</option>
-                  <option value='javascript'>JavaScript</option>
+                <option value="others">अन्य</option>
+                <option value="kavita">कविताएँ</option>
+                <option value="laghu-katha">लघु कथाएँ</option>
+                <option value="vichar">विचार और अनुभव</option>
+                <option value="shrunkhala">श्रृंखला विशेष</option>
+
                 </select>
               </div>
             </div>
@@ -279,11 +281,12 @@ export default function Search() {
                   id='category'
                   className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
                 >
-                  <option value='uncategorized'>All Categories</option>
-                  <option value='reactjs'>React.js</option>
-                  <option value='nextjs'>Next.js</option>
-                  <option value='javascript'>JavaScript</option>
-                </select>
+            <option value="others">अन्य</option>
+            <option value="kavita">कविताएँ</option>
+            <option value="laghu-katha">लघु कथाएँ</option>
+            <option value="vichar">विचार और अनुभव</option>
+            <option value="shrunkhala">श्रृंखला विशेष</option>
+            </select>
               </div>
             </div>
 

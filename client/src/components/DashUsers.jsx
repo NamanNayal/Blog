@@ -21,7 +21,6 @@ export default function DashUsers() {
       try {
         const res = await fetch('/api/user/getusers');
         const data = await res.json();
-        console.log("Fetched users:", data);
         
         if (res.ok) {
           setUsers(data.users || []);

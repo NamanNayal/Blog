@@ -71,7 +71,7 @@ const Navbar = () => {
     <nav className="w-full h-16 md:h-20 flex items-center justify-between shadow-md relative z-40">
 
       {/* LOGO */}
-      <Link to="/" className="flex items-center gap-4 text-2xl font-bold ml-8">
+      <Link to="/" className="flex items-center gap-2 text-2xl font-bold ml-4">
         <img src={Logo} alt="Lama Logo" className="max-w-12 max-h-12" />
         <span>BlogBerry</span>
       </Link>
@@ -104,7 +104,7 @@ const Navbar = () => {
 
   {/* MOBILE LINK LIST - FIXED OVERLAY */}
   <div
-    className={`fixed inset-0 w-full h-full flex flex-col items-center justify-center gap-8 font-medium text-lg transition-all duration-300 ease-in-out z-40
+    className={`fixed inset-0 w-full h-full flex flex-col items-center justify-center gap-8 font-medium text-lg transition-all duration-300 ease-in-out z-40  font-serif font-semibold 
       ${open 
         ? `opacity-100 visible backdrop-blur-md ${theme.theme === "light" ? "bg-[#e6e6ff]/95 " : "bg-[#121826]/95 "}` 
         : "opacity-0 invisible"
@@ -123,7 +123,7 @@ const Navbar = () => {
       )}
     </button>
     
-    <Link to="/" onClick={handleMobileLinkClick} className="text-2xl hover:text-blue-500 transition-colors transform hover:scale-105">
+    <Link to="/" onClick={handleMobileLinkClick} className="text-2xl hover:text-blue-500 transition-colors  transform hover:scale-105">
       Home
     </Link>
     <Link to="/about" onClick={handleMobileLinkClick} className="text-2xl hover:text-blue-500 transition-colors transform hover:scale-105">
@@ -180,7 +180,7 @@ const Navbar = () => {
         </form>
         <Link to="/">Home</Link>
         <Link to="/about">About</Link>
-        <Link to="/projects">Projects</Link>
+        <Link to="/projects">Upcoming</Link>
         <button className={`w-12 h-10 hidden sm:inline-flex items-center justify-center rounded-full transition-all duration-300 ease-in-out focus:outline-none cursor-pointer ${theme.theme === "light" ? "bg-gray-200 text-gray-800 hover:bg-gray-300 hover:shadow-md ": "bg-[#222831] text-[#E6E6FF]  hover:bg-[#3A3A47] hover:shadow-lg"} `}
         onClick={() => dispatch(toggleTheme())}>
           {theme.theme === "light" ? (

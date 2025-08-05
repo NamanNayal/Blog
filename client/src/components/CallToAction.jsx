@@ -17,7 +17,7 @@ export default function CallToAction() {
             </p>
             <Link to="/about" className=' rounded-tl-xl rounded-bl-none bg-btn-primary'>
             <button >
-                BlogBerry
+                लक्ष्मण पुंडीर
             </button>
             </Link>
 

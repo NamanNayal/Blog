@@ -44,7 +44,6 @@ export default function SignIn() {
     }
  
   }
-  console.log(formData);
   
   return (
     <div className="flex-grow flex items-center justify-center mt-18 mb-18">

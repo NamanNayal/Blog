@@ -25,17 +25,15 @@ export default function UpdatePost() {
     const navigate = useNavigate();
     const {postId} = useParams();
     const {currentUser} = useSelector((state) => state.user);
-    console.log('Form Data:', formData);
+    
 
     useEffect(()=>{
         try{
             const fetchPostData = async () =>{
                 const res = await fetch(`/api/post/getposts?postId=${postId}`);
                 const data = await res.json();
-                console.log('Post Data:', data);
                 if(!res.ok){
                     setPublishError(data.message);
-                    console.log('Error fetching post data:', data.message);
                     return;
                 }
                 if(res.ok){
@@ -72,8 +70,6 @@ export default function UpdatePost() {
     
           const data = await response.json();
 
-          console.log('Uploaded Image URL:', data.secure_url);
-          console.log('Full Cloudinary Response:', data);
     
           setImageUploading(false);
           setImageUploadError(null);
@@ -219,13 +215,12 @@ export default function UpdatePost() {
                         const selectedFile = e.target.files[0];
                         if (selectedFile) {
                             setFile(selectedFile);
-                            console.log("File selected:", selectedFile.name);
                             
                             // Create local preview and store in state
                             const reader = new FileReader();
                             reader.onload = (event) => {
                                 setFilePreview(event.target.result);
-                                console.log("Local file preview ready");
+                                
                             };
                             reader.readAsDataURL(selectedFile);
                             

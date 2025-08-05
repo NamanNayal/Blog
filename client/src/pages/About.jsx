@@ -5,7 +5,7 @@ export default function About() {
     <div className="min-h-screen flex items-center justify-center">
       <div className="max-w-2xl mx-auto p-6 text-center">
         <h1 className="text-4xl md:text-5xl font-semibold my-7">
-          Laxman Pundir's Blog
+          लक्ष्मण पुंडीर "जटिल"
         </h1>
         
         <div className="text-lg flex flex-col gap-6 text-justify leading-relaxed">
